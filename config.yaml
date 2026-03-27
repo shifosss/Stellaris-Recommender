@@ -1,0 +1,56 @@
+# Stellaris AI Advisor configuration
+# All values shown are defaults — override only what you need.
+
+stellaris:
+  install_dir: null
+  supported_versions: ["4.3"]
+  save_dir: null
+
+parser:
+  cache_parsed: true
+  cache_dir: "~/.stellaris-advisor/cache/"
+  empire_only: false
+
+data:
+  processed_dir: "~/.stellaris-advisor/data/processed/"
+  raw_dir: "~/.stellaris-advisor/data/raw/"
+  parquet_compression: "snappy"
+  temporal_lookback: 5
+
+reward:
+  fleet_power_weight: 0.25
+  tech_count_weight: 0.25
+  total_income_weight: 0.30
+  pop_count_weight: 0.20
+  lookahead_years: 50
+
+rl:
+  algorithm: "cql"
+  learning_rate: 3.0e-4
+  batch_size: 256
+  n_epochs: 100
+  gamma: 0.99
+  cql_alpha: 1.0
+  train_ratio: 0.70
+  val_ratio: 0.15
+  test_ratio: 0.15
+  holdout_galaxy_configs: ["1000_grand_admiral"]
+
+planner:
+  alpha: 0.6
+  beta: 0.4
+  top_n_recommendations: 7
+  top_n_colony_candidates: 5
+  naval_utilization_threshold: 0.7
+  threat_power_ratio: 1.5
+  discount_rate: 0.05
+  ascension_path_deadline_year: 2300
+  megastructure_readiness_year: 2300
+  megastructure_alloy_threshold: 200.0
+  influence_crisis_threshold: 2.0
+  faction_approval_warning: 20.0
+  agenda_switch_progress_threshold: 0.7
+
+benchmark:
+  year_bucket_size: 25
+  percentiles: [25, 50, 75, 90]
