@@ -130,7 +130,7 @@ def to_frozen_map(
 
 def extract_empire(raw: dict[str, Any], empire_id: int, version: str) -> EmpireState:
     """Convert a raw parsed empire dict into a frozen EmpireState."""
-    gov = raw.get("gov", {}) or {}
+    gov = raw.get("government") or raw.get("gov") or {}
     ethos = raw.get("ethos", {}) or {}
     budget_month = get_path(raw, "budget.current_month", default={}) or {}
     naval = raw.get("naval_capacity", {}) or {}
@@ -159,7 +159,7 @@ def extract_empire(raw: dict[str, Any], empire_id: int, version: str) -> EmpireS
         naval_capacity_max=safe_int(naval.get("max")),
         fleets=_extract_fleets(raw),
         owned_systems=to_int_tuple(raw.get("owned_systems")),
-        owned_planets=to_int_tuple(raw.get("owned_planets")),
+        owned_planets=(),  # Linked by save_handler after full parse
         starbases=_extract_starbases(raw),
         total_pops=safe_int(raw.get("total_pops")),
         pop_groups=_extract_pop_groups(raw),

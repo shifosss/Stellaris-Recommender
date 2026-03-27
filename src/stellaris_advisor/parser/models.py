@@ -284,7 +284,7 @@ class EmpireState:
 
     # --- Territory ---
     owned_systems: tuple[int, ...]
-    owned_planets: tuple[int, ...]
+    owned_planets: tuple[PlanetState, ...]
     starbases: tuple[StarbaseState, ...]
 
     # --- Population ---
