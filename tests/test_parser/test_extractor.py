@@ -196,7 +196,10 @@ class TestExtractEmpire:
         assert empire.name == "United Nations of Earth"
         assert empire.authority == "auth_democratic"
         assert empire.ethics == ("ethic_fanatic_egalitarian", "ethic_xenophile")
-        assert empire.civics == ("civic_beacon_of_liberty", "civic_idealistic_foundation")
+        assert empire.civics == (
+            "civic_beacon_of_liberty",
+            "civic_idealistic_foundation",
+        )
         assert empire.origin == "origin_default"
         assert empire.resource_income["energy"] == pytest.approx(150.0)
         assert "tech_corvettes" in empire.researched_techs
@@ -267,6 +270,209 @@ class TestExtractPlanet:
         assert planet.pops == 0
         assert planet.buildings == ()
         assert planet.is_capital is False
+
+
+@pytest.mark.unit
+class TestExtractEmpireHelpers:
+    """Cover private extraction helpers via extract_empire with rich raw data."""
+
+    def test_extract_leaders(self):
+        from stellaris_advisor.parser.extractor import extract_empire
+
+        raw = {
+            "name": "Empire",
+            "leaders": {
+                "0": {
+                    "id": 1,
+                    "name": "Leader One",
+                    "class": "admiral",
+                    "level": 3,
+                    "traits": ["trait_aggressive"],
+                    "expertise": "military",
+                    "assignment": "fleet_1",
+                },
+            },
+        }
+        empire = extract_empire(raw, empire_id=0, version="4.3")
+        assert len(empire.leaders) == 1
+        assert empire.leaders[0].name == "Leader One"
+        assert empire.leaders[0].leader_class == "admiral"
+        assert empire.leaders[0].traits == ("trait_aggressive",)
+
+    def test_extract_factions(self):
+        from stellaris_advisor.parser.extractor import extract_empire
+
+        raw = {
+            "name": "Empire",
+            "factions": {
+                "0": {
+                    "ethic": "ethic_egalitarian",
+                    "approval": 65.0,
+                    "size": 12,
+                    "support": 0.3,
+                    "issues": {"faction_demand_democracy": True},
+                },
+            },
+        }
+        empire = extract_empire(raw, empire_id=0, version="4.3")
+        assert len(empire.factions) == 1
+        assert empire.factions[0].ethic == "ethic_egalitarian"
+        assert empire.factions[0].approval == pytest.approx(65.0)
+        assert len(empire.factions[0].issues) == 1
+        assert empire.factions[0].issues[0].is_fulfilled is True
+
+    def test_extract_federation(self):
+        from stellaris_advisor.parser.extractor import extract_empire
+
+        raw = {
+            "name": "Empire",
+            "federation_details": {
+                "federation_type": "default_federation",
+                "level": 3,
+                "cohesion": 80.0,
+                "experience": 500.0,
+                "fleet_power": 12000.0,
+            },
+        }
+        empire = extract_empire(raw, empire_id=0, version="4.3")
+        assert empire.federation is not None
+        assert empire.federation.federation_type == "default_federation"
+        assert empire.federation.level == 3
+
+    def test_extract_agenda(self):
+        from stellaris_advisor.parser.extractor import extract_empire
+
+        raw = {
+            "name": "Empire",
+            "current_agenda": {
+                "agenda_type": "agenda_military",
+                "progress": 0.5,
+                "is_launched": True,
+            },
+        }
+        empire = extract_empire(raw, empire_id=0, version="4.3")
+        assert empire.current_agenda is not None
+        assert empire.current_agenda.agenda_type == "agenda_military"
+        assert empire.current_agenda.is_launched is True
+
+    def test_extract_council_positions(self):
+        from stellaris_advisor.parser.extractor import extract_empire
+
+        raw = {
+            "name": "Empire",
+            "council_positions": {
+                "0": {
+                    "position_type": "ruler",
+                    "leader_id": 1,
+                    "leader_name": "President",
+                    "leader_level": 5,
+                },
+            },
+        }
+        empire = extract_empire(raw, empire_id=0, version="4.3")
+        assert len(empire.council_positions) == 1
+        assert empire.council_positions[0].position_type == "ruler"
+
+    def test_extract_megastructures(self):
+        from stellaris_advisor.parser.extractor import extract_empire
+
+        raw = {
+            "name": "Empire",
+            "megastructures": {
+                "0": {"type": "dyson_sphere", "stage": 3, "system_id": 42},
+            },
+        }
+        empire = extract_empire(raw, empire_id=0, version="4.3")
+        assert len(empire.megastructures) == 1
+        assert empire.megastructures[0].megastructure_type == "dyson_sphere"
+        assert empire.megastructures[0].stage == 3
+
+    def test_extract_wars(self):
+        from stellaris_advisor.parser.extractor import extract_empire
+
+        raw = {
+            "name": "Empire",
+            "active_wars": {
+                "0": {
+                    "war_id": 1,
+                    "name": "First Contact War",
+                    "war_goal": "wg_conquest",
+                    "exhaustion": 25.0,
+                    "is_attacker": True,
+                },
+            },
+        }
+        empire = extract_empire(raw, empire_id=0, version="4.3")
+        assert len(empire.active_wars) == 1
+        assert empire.active_wars[0].name == "First Contact War"
+
+    def test_extract_claims(self):
+        from stellaris_advisor.parser.extractor import extract_empire
+
+        raw = {
+            "name": "Empire",
+            "claims_placed": {
+                "0": {"system_id": 10, "influence_cost": 50},
+            },
+        }
+        empire = extract_empire(raw, empire_id=0, version="4.3")
+        assert len(empire.claims_placed) == 1
+        assert empire.claims_placed[0].system_id == 10
+
+    def test_extract_fleets(self):
+        from stellaris_advisor.parser.extractor import extract_empire
+
+        raw = {
+            "name": "Empire",
+            "fleets": {
+                "0": {
+                    "id": 1,
+                    "name": "1st Fleet",
+                    "fleet_power": 3000.0,
+                    "ships": {"corvette": 20},
+                    "naval_capacity_used": 20,
+                    "location_system": 0,
+                    "commander": {"id": 5, "name": "Admiral", "level": 3},
+                },
+            },
+        }
+        empire = extract_empire(raw, empire_id=0, version="4.3")
+        assert len(empire.fleets) == 1
+        assert empire.fleets[0].name == "1st Fleet"
+        assert empire.fleets[0].commander is not None
+        assert empire.fleets[0].commander.name == "Admiral"
+
+    def test_extract_starbases(self):
+        from stellaris_advisor.parser.extractor import extract_empire
+
+        raw = {
+            "name": "Empire",
+            "starbases": {
+                "0": {
+                    "system_id": 0,
+                    "level": "starbase_starport",
+                    "modules": ["shipyard"],
+                    "buildings": ["listening_post"],
+                    "defense_fleet_power": 500.0,
+                },
+            },
+        }
+        empire = extract_empire(raw, empire_id=0, version="4.3")
+        assert len(empire.starbases) == 1
+        assert empire.starbases[0].level == "starbase_starport"
+
+    def test_extract_pop_groups(self):
+        from stellaris_advisor.parser.extractor import extract_empire
+
+        raw = {
+            "name": "Empire",
+            "pop_groups": {
+                "0": {"species": "human", "count": 30, "happiness": 0.7},
+            },
+        }
+        empire = extract_empire(raw, empire_id=0, version="4.3")
+        assert len(empire.pop_groups) == 1
+        assert empire.pop_groups[0].species == "human"
 
 
 @pytest.mark.unit

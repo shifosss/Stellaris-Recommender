@@ -56,7 +56,7 @@ class TestParseGameFiles:
         tech_dir.mkdir(parents=True)
         (tech_dir / "00_physics.txt").write_text(
             "tech_lasers_1={ area=physics tier=0 cost=100 weight=100 "
-            'prerequisites={} }\n'
+            "prerequisites={} }\n"
             "tech_lasers_2={ area=physics tier=1 cost=500 weight=80 "
             'prerequisites={ "tech_lasers_1" } }\n'
         )

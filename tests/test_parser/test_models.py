@@ -7,7 +7,6 @@ from types import MappingProxyType
 @pytest.mark.unit
 class TestEmpireState:
     def test_empire_state_is_frozen(self):
-        from stellaris_advisor.parser.models import EmpireState
 
         empire = _make_test_empire(name="Test Empire")
         assert empire.name == "Test Empire"
@@ -15,14 +14,12 @@ class TestEmpireState:
             empire.name = "Modified"
 
     def test_empire_techs_are_frozenset(self):
-        from stellaris_advisor.parser.models import EmpireState
 
         empire = _make_test_empire(researched_techs=frozenset({"tech_a", "tech_b"}))
         assert isinstance(empire.researched_techs, frozenset)
         assert "tech_a" in empire.researched_techs
 
     def test_empire_resources_are_immutable(self):
-        from stellaris_advisor.parser.models import EmpireState
 
         empire = _make_test_empire(resource_income=MappingProxyType({"energy": 100.0}))
         with pytest.raises(TypeError):

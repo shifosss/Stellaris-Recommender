@@ -65,14 +65,14 @@ class TestTokenizer:
     def test_comment_skipped(self):
         from stellaris_advisor.parser.clausewitz import tokenize
 
-        tokens = list(tokenize("# this is a comment\nname=\"Earth\""))
+        tokens = list(tokenize('# this is a comment\nname="Earth"'))
         non_eof = [t for t in tokens if t.type.name != "EOF"]
         assert len(non_eof) == 3
 
     def test_inline_comment_skipped(self):
         from stellaris_advisor.parser.clausewitz import tokenize
 
-        tokens = list(tokenize("name=\"Earth\" # inline comment"))
+        tokens = list(tokenize('name="Earth" # inline comment'))
         non_eof = [t for t in tokens if t.type.name != "EOF"]
         assert len(non_eof) == 3
 
@@ -202,7 +202,9 @@ class TestParser:
     def test_duplicate_keys_become_list(self):
         from stellaris_advisor.parser.clausewitz import parse
 
-        text = "weight_modifier={\n    factor=1.5\n}\nweight_modifier={\n    factor=2.0\n}"
+        text = (
+            "weight_modifier={\n    factor=1.5\n}\nweight_modifier={\n    factor=2.0\n}"
+        )
         result = parse(text)
         assert isinstance(result["weight_modifier"], list)
         assert len(result["weight_modifier"]) == 2

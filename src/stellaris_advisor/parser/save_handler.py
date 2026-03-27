@@ -20,6 +20,7 @@ from stellaris_advisor.parser.models import (
     EmpireState,
     GalacticState,
     PlanetState,
+    SystemState,
 )
 from stellaris_advisor.parser.version import detect_version
 
@@ -100,7 +101,9 @@ def parse_save(path: str) -> GalacticState:
         month=month,
         game_version=version,
         galaxy_size=safe_int(
-            gs_raw.get("galaxy", {}).get("star_count") if isinstance(gs_raw.get("galaxy"), dict) else None
+            gs_raw.get("galaxy", {}).get("star_count")
+            if isinstance(gs_raw.get("galaxy"), dict)
+            else None
         ),
         difficulty=safe_str(gs_raw.get("difficulty")),
         crisis_active=bool(gs_raw.get("crisis_active")),
@@ -230,9 +233,7 @@ def _build_empires(
     return empires
 
 
-def _build_systems(
-    gs_raw: dict[str, Any], version: str
-) -> list:
+def _build_systems(gs_raw: dict[str, Any], version: str) -> list[SystemState]:
     """Build system list from galactic_object section."""
     objects = gs_raw.get("galactic_object", {})
     if not isinstance(objects, dict):

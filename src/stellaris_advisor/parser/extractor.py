@@ -166,14 +166,20 @@ def extract_empire(raw: dict[str, Any], empire_id: int, version: str) -> EmpireS
         rivals=to_int_tuple(raw.get("rivals")),
         defensive_pacts=to_int_tuple(raw.get("defensive_pacts")),
         federation_id=raw.get("federation"),
-        federation_power=safe_float(raw.get("federation_power")) if raw.get("federation_power") is not None else None,
+        federation_power=(
+            safe_float(raw.get("federation_power"))
+            if raw.get("federation_power") is not None
+            else None
+        ),
         subjects=to_int_tuple(raw.get("subjects")),
         overlord=raw.get("overlord"),
         traditions_unlocked=to_str_tuple(raw.get("traditions")),
         tradition_trees_opened=to_str_tuple(raw.get("tradition_trees_opened")),
         tradition_trees_completed=to_str_tuple(raw.get("tradition_trees_completed")),
         ascension_perks=to_str_tuple(raw.get("ascension_perks")),
-        ascension_perk_slots_available=safe_int(raw.get("ascension_perk_slots_available")),
+        ascension_perk_slots_available=safe_int(
+            raw.get("ascension_perk_slots_available")
+        ),
         ascension_perk_slots_total=safe_int(raw.get("ascension_perk_slots_total")),
         ascension_path=raw.get("ascension_path"),
         ascension_situation_progress=(
@@ -195,7 +201,9 @@ def extract_empire(raw: dict[str, Any], empire_id: int, version: str) -> EmpireS
         active_resolutions=to_str_tuple(raw.get("active_resolutions")),
         federation=_extract_federation(raw),
         megastructures=_extract_megastructures(raw),
-        megastructures_under_construction=safe_int(raw.get("megastructures_under_construction")),
+        megastructures_under_construction=safe_int(
+            raw.get("megastructures_under_construction")
+        ),
         active_wars=_extract_wars(raw),
         claims_placed=_extract_claims(raw),
         total_army_strength=safe_float(raw.get("total_army_strength")),
@@ -459,7 +467,11 @@ def extract_planet(raw: dict[str, Any], planet_id: int, version: str) -> PlanetS
         districts=to_frozen_map(districts, value_converter=int),
         district_slots=to_frozen_map(district_slots, value_converter=int),
         total_district_cap=safe_int(raw.get("total_district_cap")),
-        districts_used=sum(int(v) for v in districts.values()) if isinstance(districts, dict) else 0,
+        districts_used=(
+            sum(int(v) for v in districts.values())
+            if isinstance(districts, dict)
+            else 0
+        ),
         buildings=to_str_tuple(raw.get("buildings")),
         building_slots_total=safe_int(raw.get("building_slots_total")),
         building_slots_used=len(raw.get("buildings", []) or []),

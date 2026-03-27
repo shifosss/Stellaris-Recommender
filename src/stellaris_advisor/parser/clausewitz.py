@@ -42,10 +42,7 @@ class TokenizeError(Exception):
 
 # Characters valid inside an unquoted identifier (after the first character).
 _IDENT_CHARS = frozenset(
-    "abcdefghijklmnopqrstuvwxyz"
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    "0123456789"
-    "_.:@'-"
+    "abcdefghijklmnopqrstuvwxyz" "ABCDEFGHIJKLMNOPQRSTUVWXYZ" "0123456789" "_.:@'-"
 )
 
 _ESCAPE_MAP: dict[str, str] = {
@@ -312,7 +309,10 @@ class _Parser:
             return {}
 
         # Peek: if second token is EQUALS, this is a dict block.
-        if self._pos + 1 < len(self._tokens) and self._tokens[self._pos + 1].type == TokenType.EQUALS:
+        if (
+            self._pos + 1 < len(self._tokens)
+            and self._tokens[self._pos + 1].type == TokenType.EQUALS
+        ):
             pairs = self._parse_pairs(TokenType.RBRACE)
             self._advance()  # consume RBRACE
             return pairs
@@ -342,7 +342,7 @@ def parse(text: str) -> dict[str, Any]:
     tokens = list(tokenize(text))
     parser = _Parser(tokens)
     result = parser.parse_top_level()
-    return _normalize(result)
+    return dict(_normalize(result))
 
 
 def _normalize(obj: Any) -> Any:
