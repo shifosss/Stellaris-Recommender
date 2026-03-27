@@ -205,3 +205,14 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Stellaris Advisor project-specific
+data/
+models/
+*.sav
+.stellaris-advisor/
+.superpowers/
+.idea/
+.vscode/
+*.swp
+*.swo
