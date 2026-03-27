@@ -1,7 +1,7 @@
 """Tests for Clausewitz format tokenizer and parser."""
 
 import pytest
-from hypothesis import given, strategies as st
+from hypothesis import assume, given, strategies as st
 
 
 @pytest.mark.unit
@@ -293,6 +293,13 @@ class TestParser:
         result = parse(text)
         assert result["planets"] == [7]
 
+    def test_bare_list_with_nested_blocks(self):
+        from stellaris_advisor.parser.clausewitz import parse
+
+        text = "hyperlane={ { to=1 } { to=2 } }"
+        result = parse(text)
+        assert result["hyperlane"] == [{"to": 1}, {"to": 2}]
+
     def test_triple_duplicate_keys(self):
         from stellaris_advisor.parser.clausewitz import parse
 
@@ -315,10 +322,8 @@ class TestParserProperties:
     def test_identifier_roundtrip(self, ident: str):
         from stellaris_advisor.parser.clausewitz import parse
 
-        if not (ident[0].isalpha() or ident[0] == "_"):
-            return
-        if ident in ("yes", "no"):
-            return
+        assume(ident[0].isalpha() or ident[0] == "_")
+        assume(ident not in ("yes", "no"))
         text = f'{ident}="value"'
         result = parse(text)
         assert ident in result

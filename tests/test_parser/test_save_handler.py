@@ -12,8 +12,6 @@ class TestParseSave:
         from stellaris_advisor.parser import parse_save
 
         save_path = FIXTURES_DIR / "sample_save_small.sav"
-        if not save_path.exists():
-            pytest.skip("Fixture not generated")
         state = parse_save(str(save_path))
         assert state.year == 2250
         assert state.game_version == "4.3"
@@ -35,8 +33,6 @@ class TestParseSave:
         from stellaris_advisor.parser import parse_save
 
         save_path = FIXTURES_DIR / "sample_save_small.sav"
-        if not save_path.exists():
-            pytest.skip("Fixture not generated")
         state = parse_save(str(save_path))
         empire = state.player_empire
         assert len(empire.owned_planets) >= 1

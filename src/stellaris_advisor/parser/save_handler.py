@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import dataclasses
+import logging
 import zipfile
 from pathlib import Path
 from typing import Any
@@ -23,6 +24,8 @@ from stellaris_advisor.parser.models import (
     SystemState,
 )
 from stellaris_advisor.parser.version import detect_version
+
+_logger = logging.getLogger(__name__)
 
 
 # ---------------------------------------------------------------------------
@@ -143,7 +146,8 @@ def parse_game_files(stellaris_dir: str) -> dict[str, dict[str, Any]]:
                 text = txt_file.read_text(encoding="utf-8-sig")
                 parsed = parse(text)
                 merged.update(parsed)
-            except Exception:
+            except Exception as exc:
+                _logger.warning("Failed to parse %s: %s", txt_file, exc)
                 continue
         if merged:
             # Use the leaf directory name as the category key

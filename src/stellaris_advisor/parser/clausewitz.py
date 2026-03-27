@@ -168,15 +168,6 @@ def tokenize(text: str) -> Iterator[Token]:
                 yield Token(TokenType.IDENTIFIER, raw, line, start_col)
                 continue
 
-            # Also treat as identifier if there are additional dots (e.g. "1.2.3")
-            if has_dot and pos < length and text[pos] == ".":
-                while pos < length and text[pos] in _IDENT_CHARS:
-                    pos += 1
-                    col += 1
-                raw = text[start_pos:pos]
-                yield Token(TokenType.IDENTIFIER, raw, line, start_col)
-                continue
-
             raw = text[start_pos:pos]
 
             # Non-negative pure integers used as keys (followed by =) → IDENTIFIER
@@ -324,7 +315,10 @@ class _Parser:
         """Parse bare values until RBRACE."""
         items: list[Any] = []
         while self._peek().type != TokenType.RBRACE:
-            items.append(self._advance().value)
+            if self._peek().type == TokenType.LBRACE:
+                items.append(self._parse_block_or_list())
+            else:
+                items.append(self._advance().value)
         self._advance()  # consume RBRACE
         return items
 

@@ -165,14 +165,20 @@ def extract_empire(raw: dict[str, Any], empire_id: int, version: str) -> EmpireS
         pop_groups=_extract_pop_groups(raw),
         rivals=to_int_tuple(raw.get("rivals")),
         defensive_pacts=to_int_tuple(raw.get("defensive_pacts")),
-        federation_id=raw.get("federation"),
+        federation_id=(
+            safe_int(raw.get("federation"))
+            if raw.get("federation") is not None
+            else None
+        ),
         federation_power=(
             safe_float(raw.get("federation_power"))
             if raw.get("federation_power") is not None
             else None
         ),
         subjects=to_int_tuple(raw.get("subjects")),
-        overlord=raw.get("overlord"),
+        overlord=(
+            safe_int(raw.get("overlord")) if raw.get("overlord") is not None else None
+        ),
         traditions_unlocked=to_str_tuple(raw.get("traditions")),
         tradition_trees_opened=to_str_tuple(raw.get("tradition_trees_opened")),
         tradition_trees_completed=to_str_tuple(raw.get("tradition_trees_completed")),
@@ -253,8 +259,6 @@ def _extract_council(raw: dict[str, Any]) -> tuple[CouncilPosition, ...]:
     """Extract council position entries."""
     council_raw = raw.get("council_positions", {}) or {}
     if not isinstance(council_raw, dict):
-        if isinstance(council_raw, list):
-            return ()
         return ()
     result: list[CouncilPosition] = []
     for entry in council_raw.values():
@@ -479,7 +483,7 @@ def extract_planet(raw: dict[str, Any], planet_id: int, version: str) -> PlanetS
             raw.get("district_specializations"), value_converter=str
         ),
         pops=safe_int(raw.get("pop")),
-        pop_groups=_extract_planet_pop_groups(raw),
+        pop_groups=_extract_pop_groups(raw),
         stability=safe_float(raw.get("stability")),
         crime=safe_float(raw.get("crime")),
         amenities=safe_float(raw.get("amenities")),
@@ -490,24 +494,6 @@ def extract_planet(raw: dict[str, Any], planet_id: int, version: str) -> PlanetS
         planetary_features=to_str_tuple(raw.get("planetary_features")),
         is_capital=safe_bool(raw.get("is_capital")),
     )
-
-
-def _extract_planet_pop_groups(raw: dict[str, Any]) -> tuple[PopGroupState, ...]:
-    """Extract pop groups from a planet dict."""
-    groups_raw = raw.get("pop_groups", {}) or {}
-    if not isinstance(groups_raw, dict):
-        return ()
-    result: list[PopGroupState] = []
-    for entry in groups_raw.values():
-        if isinstance(entry, dict):
-            result.append(
-                PopGroupState(
-                    species=safe_str(entry.get("species")),
-                    count=safe_int(entry.get("count")),
-                    happiness=safe_float(entry.get("happiness")),
-                )
-            )
-    return tuple(result)
 
 
 # ---------------------------------------------------------------------------

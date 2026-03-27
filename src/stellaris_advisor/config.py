@@ -3,10 +3,9 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import ClassVar
 
 import yaml
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
 
 class StellarisDirConfig(BaseModel, frozen=True):
@@ -24,6 +23,11 @@ class ParserConfig(BaseModel, frozen=True):
     cache_dir: Path = Path("~/.stellaris-advisor/cache/")
     empire_only: bool = False
 
+    @field_validator("cache_dir", mode="after")
+    @classmethod
+    def _expand_cache_dir(cls, v: Path) -> Path:
+        return v.expanduser()
+
 
 class DataConfig(BaseModel, frozen=True):
     """Data pipeline directories and settings."""
@@ -32,6 +36,11 @@ class DataConfig(BaseModel, frozen=True):
     raw_dir: Path = Path("~/.stellaris-advisor/data/raw/")
     parquet_compression: str = "snappy"
     temporal_lookback: int = 5
+
+    @field_validator("processed_dir", "raw_dir", mode="after")
+    @classmethod
+    def _expand_data_dirs(cls, v: Path) -> Path:
+        return v.expanduser()
 
 
 class RewardConfig(BaseModel, frozen=True):
@@ -94,8 +103,6 @@ class Config(BaseModel, frozen=True):
     rl: RLConfig = RLConfig()
     planner: PlannerConfig = PlannerConfig()
     benchmark: BenchmarkConfig = BenchmarkConfig()
-
-    _DEFAULT: ClassVar[Config | None] = None
 
     @classmethod
     def default(cls) -> Config:
