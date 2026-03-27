@@ -1,10 +1,11 @@
-"""Clausewitz format tokenizer for Stellaris save files and game definitions."""
+"""Clausewitz format tokenizer and recursive descent parser for Stellaris save files."""
 
 from __future__ import annotations
 
 from collections.abc import Iterator
 from dataclasses import dataclass
 from enum import Enum, auto
+from typing import Any
 
 
 class TokenType(Enum):
@@ -215,3 +216,141 @@ def tokenize(text: str) -> Iterator[Token]:
         raise TokenizeError(f"Unexpected character: {ch!r}", line, col)
 
     yield Token(TokenType.EOF, "", line, col)
+
+
+# ---------------------------------------------------------------------------
+# Recursive descent parser
+# ---------------------------------------------------------------------------
+
+
+class ParseError(Exception):
+    """Raised when the parser encounters an unexpected token sequence."""
+
+    def __init__(self, message: str, line: int, col: int) -> None:
+        self.line = line
+        self.col = col
+        super().__init__(f"Line {line}, col {col}: {message}")
+
+
+class _DuplicateList(list):  # type: ignore[type-arg]
+    """Marker subclass to distinguish duplicate-key lists from bare value lists."""
+
+
+class _Parser:
+    """Token-list based recursive descent parser for Clausewitz format."""
+
+    __slots__ = ("_tokens", "_pos")
+
+    def __init__(self, tokens: list[Token]) -> None:
+        self._tokens = tokens
+        self._pos = 0
+
+    # -- helpers --
+
+    def _peek(self) -> Token:
+        return self._tokens[self._pos]
+
+    def _advance(self) -> Token:
+        tok = self._tokens[self._pos]
+        self._pos += 1
+        return tok
+
+    def _expect(self, tt: TokenType) -> Token:
+        tok = self._advance()
+        if tok.type != tt:
+            raise ParseError(
+                f"Expected {tt.name}, got {tok.type.name} ({tok.value!r})",
+                tok.line,
+                tok.col,
+            )
+        return tok
+
+    # -- grammar --
+
+    def parse_top_level(self) -> dict[str, Any]:
+        """Parse the entire token stream into a dict."""
+        return self._parse_pairs(TokenType.EOF)
+
+    def _parse_pairs(self, until: TokenType) -> dict[str, Any]:
+        """Parse key=value pairs until *until* token type is seen."""
+        result: dict[str, Any] = {}
+        while self._peek().type != until:
+            key_tok = self._advance()
+            if key_tok.type not in (TokenType.IDENTIFIER, TokenType.STRING):
+                raise ParseError(
+                    f"Expected key, got {key_tok.type.name} ({key_tok.value!r})",
+                    key_tok.line,
+                    key_tok.col,
+                )
+            key = str(key_tok.value)
+            self._expect(TokenType.EQUALS)
+            value = self._parse_value()
+            if key in result:
+                existing = result[key]
+                if isinstance(existing, _DuplicateList):
+                    existing.append(value)
+                else:
+                    result[key] = _DuplicateList([existing, value])
+            else:
+                result[key] = value
+        return result
+
+    def _parse_value(self) -> Any:
+        """Parse a single value (scalar, block, or list)."""
+        tok = self._peek()
+        if tok.type == TokenType.LBRACE:
+            return self._parse_block_or_list()
+        return self._advance().value
+
+    def _parse_block_or_list(self) -> Any:
+        """Parse { ... } as either a dict or a bare value list."""
+        self._advance()  # consume LBRACE
+
+        # Empty block
+        if self._peek().type == TokenType.RBRACE:
+            self._advance()
+            return {}
+
+        # Peek: if second token is EQUALS, this is a dict block.
+        if self._pos + 1 < len(self._tokens) and self._tokens[self._pos + 1].type == TokenType.EQUALS:
+            pairs = self._parse_pairs(TokenType.RBRACE)
+            self._advance()  # consume RBRACE
+            return pairs
+
+        # Otherwise, bare value list.
+        return self._parse_bare_list()
+
+    def _parse_bare_list(self) -> list[Any]:
+        """Parse bare values until RBRACE."""
+        items: list[Any] = []
+        while self._peek().type != TokenType.RBRACE:
+            items.append(self._advance().value)
+        self._advance()  # consume RBRACE
+        return items
+
+
+def parse(text: str) -> dict[str, Any]:
+    """Parse Clausewitz-format text into a nested dict.
+
+    Handles key=value pairs, nested blocks, bare value lists,
+    and duplicate keys (collapsed into lists).
+
+    Raises:
+        ParseError: If the token stream has unexpected structure.
+        TokenizeError: If the text cannot be tokenized.
+    """
+    tokens = list(tokenize(text))
+    parser = _Parser(tokens)
+    result = parser.parse_top_level()
+    return _normalize(result)
+
+
+def _normalize(obj: Any) -> Any:
+    """Convert _DuplicateList markers back to plain lists, recursively."""
+    if isinstance(obj, dict):
+        return {k: _normalize(v) for k, v in obj.items()}
+    if isinstance(obj, _DuplicateList):
+        return [_normalize(item) for item in obj]
+    if isinstance(obj, list):
+        return [_normalize(item) for item in obj]
+    return obj
