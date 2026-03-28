@@ -47,3 +47,84 @@ class TestEvalResult:
         )
         with pytest.raises(AttributeError):
             result.spearman_rho = 0.5  # type: ignore[misc]
+
+
+@pytest.mark.unit
+class TestEvaluateValuePredictions:
+    def test_constant_predictions_returns_zero_rho(self) -> None:
+        """Constant predictions produce undefined Spearman — must return 0.0, not NaN."""
+        from stellaris_advisor.rl.evaluation import evaluate_value_predictions
+
+        predicted = np.ones(10, dtype=np.float32)
+        actual = np.arange(10, dtype=np.float32)
+        rho, p_value = evaluate_value_predictions(predicted, actual)
+        assert not np.isnan(rho), "rho must not be NaN"
+        assert rho == 0.0
+        assert not np.isnan(p_value), "p_value must not be NaN"
+        assert p_value == 1.0
+
+    def test_constant_returns_returns_zero_rho(self) -> None:
+        """Constant actual returns also produce undefined Spearman — must return 0.0, not NaN."""
+        from stellaris_advisor.rl.evaluation import evaluate_value_predictions
+
+        predicted = np.arange(10, dtype=np.float32)
+        actual = np.ones(10, dtype=np.float32)
+        rho, p_value = evaluate_value_predictions(predicted, actual)
+        assert not np.isnan(rho)
+        assert rho == 0.0
+        assert not np.isnan(p_value)
+        assert p_value == 1.0
+
+    def test_normal_predictions_returns_float(self) -> None:
+        """Non-degenerate inputs must return plain floats."""
+        from stellaris_advisor.rl.evaluation import evaluate_value_predictions
+
+        rng = np.random.RandomState(0)
+        predicted = rng.randn(50).astype(np.float32)
+        actual = rng.randn(50).astype(np.float32)
+        rho, p_value = evaluate_value_predictions(predicted, actual)
+        assert isinstance(rho, float)
+        assert isinstance(p_value, float)
+        assert not np.isnan(rho)
+        assert not np.isnan(p_value)
+
+
+@pytest.mark.unit
+class TestBaselineNaNSanitization:
+    def test_lag_baseline_is_float_not_nan(self) -> None:
+        """baseline_lag_rho must be a finite float, never NaN."""
+        from unittest.mock import MagicMock
+
+        from stellaris_advisor.rl.evaluation import evaluate
+
+        # Constant rewards → returns are constant → lag baseline would be NaN
+        obs = np.zeros((5, 3), dtype=np.float32)
+        rewards = np.ones(5, dtype=np.float32)
+        terminals = np.array([0, 0, 0, 0, 1], dtype=np.float32)
+
+        model = MagicMock()
+        model.predict.return_value = np.zeros((5, 2), dtype=np.float32)
+        model.predict_value.return_value = np.ones((5, 1), dtype=np.float32)
+
+        result = evaluate(model, obs, rewards, terminals)
+        assert isinstance(result.baseline_lag_rho, float)
+        assert not np.isnan(result.baseline_lag_rho)
+
+    def test_random_baseline_is_float_not_nan(self) -> None:
+        """baseline_random_rho must be a finite float, never NaN."""
+        from unittest.mock import MagicMock
+
+        from stellaris_advisor.rl.evaluation import evaluate
+
+        # Constant rewards → constant returns → random baseline would be NaN
+        obs = np.zeros((5, 3), dtype=np.float32)
+        rewards = np.ones(5, dtype=np.float32)
+        terminals = np.array([0, 0, 0, 0, 1], dtype=np.float32)
+
+        model = MagicMock()
+        model.predict.return_value = np.zeros((5, 2), dtype=np.float32)
+        model.predict_value.return_value = np.ones((5, 1), dtype=np.float32)
+
+        result = evaluate(model, obs, rewards, terminals)
+        assert isinstance(result.baseline_random_rho, float)
+        assert not np.isnan(result.baseline_random_rho)

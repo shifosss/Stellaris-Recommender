@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from pathlib import Path
 from types import MappingProxyType
@@ -24,36 +25,21 @@ class TuningResult:
     study_name: str
 
 
-def tune(
-    train_arrays: RLArrays,
+def _make_objective(
+    train_dataset: Any,
     val_arrays: RLArrays,
-    output_dir: Path,
-    n_trials: int = 20,
-    n_steps_per_trial: int | None = None,
-    device: str = "cpu:0",
-    gamma: float = 0.99,
-) -> TuningResult:
-    """Run Optuna hyperparameter search.
+    val_returns: Any,
+    gamma: float,
+    n_steps: int,
+    device: str,
+) -> Any:
+    """Return the Optuna objective closure.
 
-    Search space:
-    - learning_rate: [1e-5, 1e-2] log-uniform
-    - batch_size: {64, 128, 256, 512}
-    - cql_alpha: [0.1, 10.0] uniform
-
-    Objective: Spearman ρ on validation set.
+    Extracted for testability.  The returned callable maps a Trial to a float.
+    NaN rho values are replaced with -1.0 so every trial completes with a
+    finite score and study.best_trial never raises ValueError over NaN.
     """
     import d3rlpy
-    import optuna
-
-    optuna.logging.set_verbosity(optuna.logging.WARNING)
-
-    train_dataset = build_mdp_dataset(train_arrays)
-    val_returns = compute_discounted_returns(
-        val_arrays.rewards, val_arrays.terminals, gamma
-    )
-
-    if n_steps_per_trial is None:
-        n_steps_per_trial = max(10, len(train_arrays.observations) // 4)
 
     def objective(trial: Any) -> float:
         lr = trial.suggest_float("learning_rate", 1e-5, 1e-2, log=True)
@@ -75,7 +61,7 @@ def tune(
             critic_encoder_factory=encoder_factory,
         ).create(device=device)
 
-        algo.fit(train_dataset, n_steps=n_steps_per_trial, show_progress=False)
+        algo.fit(train_dataset, n_steps=n_steps, show_progress=False)
 
         actions = algo.predict(val_arrays.observations.copy())
         pred_values = algo.predict_value(
@@ -83,7 +69,49 @@ def tune(
         ).flatten()
         rho, _ = evaluate_value_predictions(pred_values, val_returns)
 
-        return rho
+        return float(rho) if not math.isnan(rho) else -1.0
+
+    return objective
+
+
+def tune(
+    train_arrays: RLArrays,
+    val_arrays: RLArrays,
+    output_dir: Path,
+    n_trials: int = 20,
+    n_steps_per_trial: int | None = None,
+    device: str = "cpu:0",
+    gamma: float = 0.99,
+) -> TuningResult:
+    """Run Optuna hyperparameter search.
+
+    Search space:
+    - learning_rate: [1e-5, 1e-2] log-uniform
+    - batch_size: {64, 128, 256, 512}
+    - cql_alpha: [0.1, 10.0] uniform
+
+    Objective: Spearman rho on validation set.
+    """
+    import optuna
+
+    optuna.logging.set_verbosity(optuna.logging.WARNING)
+
+    train_dataset = build_mdp_dataset(train_arrays)
+    val_returns = compute_discounted_returns(
+        val_arrays.rewards, val_arrays.terminals, gamma
+    )
+
+    if n_steps_per_trial is None:
+        n_steps_per_trial = max(10, len(train_arrays.observations) // 4)
+
+    objective = _make_objective(
+        train_dataset=train_dataset,
+        val_arrays=val_arrays,
+        val_returns=val_returns,
+        gamma=gamma,
+        n_steps=n_steps_per_trial,
+        device=device,
+    )
 
     study = optuna.create_study(
         direction="maximize",

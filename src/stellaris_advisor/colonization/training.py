@@ -27,11 +27,19 @@ class ColonizationTrainResult:
 def create_colonization_labels(
     system_features_path: Path,
     transitions_path: Path,
+    player_empire_id: int = 0,
 ) -> tuple[Any, Any, list[int]]:
     """Create (X, y, groups) for LambdaMART training.
 
-    Labels: 1 if the system was colonised in the next period, 0 otherwise.
+    Labels: 1 if the system was colonised by the player empire in the same
+    (game_id, year) snapshot, 0 otherwise.
     Groups: (game_id, year) pairs define query groups.
+
+    Args:
+        system_features_path: Path to system_features.parquet.
+        transitions_path: Path to transitions.parquet.
+        player_empire_id: Only transitions from this empire_id are counted as
+            positive colonisation events.
     """
     import pyarrow.parquet as pq
 
@@ -46,30 +54,37 @@ def create_colonization_labels(
     for i in range(len(sys_game_ids)):
         X_rows.append([col[i] for col in feature_cols])
 
-    # Load transitions to find colonised systems
+    # Load transitions to find systems colonised by the player empire.
+    # Key: (game_id, year, system_id) — prevents future-year claims leaking into
+    # earlier snapshot labels (N6) and excludes AI-empire claims (N7).
     trans_table = pq.read_table(transitions_path)
-    colonised: set[tuple[str, str]] = set()
+    colonised: set[tuple[str, int, str]] = set()
     for i in range(len(trans_table)):
-        if trans_table.column("action_type")[i].as_py() == "system_claimed":
-            params = json.loads(trans_table.column("action_params")[i].as_py())
-            game_id = trans_table.column("game_id")[i].as_py()
-            sys_id = params.get("system_id", "")
-            colonised.add((game_id, str(sys_id)))
+        if trans_table.column("action_type")[i].as_py() != "system_claimed":
+            continue
+        empire_id = trans_table.column("empire_id")[i].as_py()
+        if empire_id != player_empire_id:
+            continue
+        params = json.loads(trans_table.column("action_params")[i].as_py())
+        game_id = trans_table.column("game_id")[i].as_py()
+        year = trans_table.column("year")[i].as_py()
+        sys_id = params.get("system_id", "")
+        colonised.add((game_id, int(year), str(sys_id)))
 
     # Build labels
     y_list: list[int] = []
     for i in range(len(sys_game_ids)):
-        key = (sys_game_ids[i], str(sys_ids[i]))
+        key = (sys_game_ids[i], int(sys_years[i]), str(sys_ids[i]))
         y_list.append(1 if key in colonised else 0)
 
     # Build groups: contiguous runs of same (game_id, year)
     groups: list[int] = []
-    prev_key = None
+    prev_group_key: tuple[Any, Any] | None = None
     for i in range(len(sys_game_ids)):
-        key = (sys_game_ids[i], sys_years[i])
-        if key != prev_key:
+        group_key = (sys_game_ids[i], sys_years[i])
+        if group_key != prev_group_key:
             groups.append(1)
-            prev_key = key
+            prev_group_key = group_key
         else:
             groups[-1] += 1
 
@@ -105,29 +120,17 @@ def train_colonization(
     n_estimators: int = 100,
     num_leaves: int = 31,
     learning_rate: float = 0.05,
+    player_empire_id: int = 0,
 ) -> ColonizationTrainResult:
     """Train LightGBM LambdaMART colonization ranker."""
+    X, y, groups = create_colonization_labels(
+        system_features_path, transitions_path, player_empire_id=player_empire_id
+    )
+
+    if len(X) == 0:
+        raise ValueError("No system features found — cannot train colonization model.")
+
     import lightgbm as lgb
-
-    X, y, groups = create_colonization_labels(system_features_path, transitions_path)
-
-    # Ensure positive labels exist; if not, return degenerate result
-    if y.sum() == 0:
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        ranker = lgb.LGBMRanker(n_estimators=1, num_leaves=2)
-        # Train with synthetic positive to avoid crash
-        y_synth = y.copy()
-        y_synth[0] = 1
-        ranker.fit(X, y_synth, group=groups)
-        scorer = ColonizationScorer(ranker)
-        scorer.save(output_path)
-        return ColonizationTrainResult(
-            model_path=output_path,
-            ndcg_at_10=0.0,
-            baseline_ndcg_at_10=0.0,
-            improvement_pct=0.0,
-            n_samples=len(X),
-        )
 
     ranker = lgb.LGBMRanker(
         objective="lambdarank",

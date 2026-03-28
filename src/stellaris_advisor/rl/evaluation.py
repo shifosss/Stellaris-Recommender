@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from typing import Any
 
@@ -47,7 +48,10 @@ def evaluate_value_predictions(
     from scipy.stats import spearmanr
 
     rho, p_value = spearmanr(predicted_values, actual_returns)
-    return float(rho), float(p_value)
+    return (
+        float(rho) if not math.isnan(rho) else 0.0,
+        float(p_value) if not math.isnan(p_value) else 1.0,
+    )
 
 
 def evaluate(
@@ -91,6 +95,6 @@ def evaluate(
         spearman_rho=rho,
         spearman_p_value=p_value,
         baseline_lag_rho=float(lag_rho) if not np.isnan(lag_rho) else 0.0,
-        baseline_random_rho=float(random_rho),
+        baseline_random_rho=float(random_rho) if not np.isnan(random_rho) else 0.0,
         n_test_samples=len(actual_returns),
     )

@@ -60,5 +60,9 @@ class _BoosterWrapper:
     def __init__(self, booster: Any) -> None:
         self._booster = booster
 
+    @property
+    def booster_(self) -> Any:
+        return self._booster
+
     def predict(self, X: Any) -> Any:
         return self._booster.predict(X)

@@ -2,9 +2,28 @@
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
+
+
+@pytest.mark.unit
+def test_is_available_without_numpy(tmp_path: Path) -> None:
+    """is_available() must not import numpy and must not crash when numpy is absent."""
+    # Ensure the module is not cached from a previous import that had numpy present.
+    sys.modules.pop("stellaris_advisor.rl.inference", None)
+
+    with patch.dict(sys.modules, {"numpy": None}):
+        from stellaris_advisor.rl.inference import RLPredictor
+
+        result = RLPredictor.is_available(tmp_path / "nonexistent")
+
+    assert result is False
+
+    # Clean up so later tests get a fresh import.
+    sys.modules.pop("stellaris_advisor.rl.inference", None)
 
 
 @pytest.mark.unit

@@ -3,12 +3,42 @@
 from __future__ import annotations
 
 from pathlib import Path
+from unittest.mock import MagicMock
 
 import pytest
 
 from stellaris_advisor.features.registry import SYSTEM_FEATURE_NAMES
 
 SYSTEM_DIM = len(SYSTEM_FEATURE_NAMES)  # 12
+
+
+@pytest.mark.unit
+class TestBoosterWrapper:
+    def test_booster_property_returns_inner_booster(self) -> None:
+        from stellaris_advisor.colonization.scorer import _BoosterWrapper
+
+        inner = MagicMock()
+        wrapper = _BoosterWrapper(inner)
+        assert wrapper.booster_ is inner
+
+    def test_load_then_save_does_not_crash(self, tmp_path: Path) -> None:
+        """ColonizationScorer.load(path).save(new_path) must not crash (bug N5)."""
+        from stellaris_advisor.colonization.scorer import (
+            ColonizationScorer,
+            _BoosterWrapper,
+        )
+
+        # Build a scorer backed by a _BoosterWrapper (the load() code path)
+        inner_booster = MagicMock()
+        inner_booster.save_model = MagicMock()
+        wrapper = _BoosterWrapper(inner_booster)
+        scorer = ColonizationScorer(wrapper)
+
+        new_path = tmp_path / "resaved_model.txt"
+        # This must not raise AttributeError: '_BoosterWrapper has no attribute booster_'
+        scorer.save(new_path)
+
+        inner_booster.save_model.assert_called_once_with(str(new_path))
 
 
 @pytest.mark.unit

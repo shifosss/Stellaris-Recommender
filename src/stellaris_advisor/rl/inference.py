@@ -3,9 +3,6 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
-
-import numpy as np
 
 from stellaris_advisor.rl.action_encoder import ActionEncoder
 from stellaris_advisor.rl.state_encoder import StateEncoder
@@ -27,6 +24,8 @@ class RLPredictor:
 
     def predict_value(self, state_features: list[float]) -> float:
         """Approximate V(s) by querying Q(s, π(s))."""
+        import numpy as np
+
         obs = np.array([state_features], dtype=np.float32)
         action = self._model.predict(obs)
         q = self._model.predict_value(obs, action)
@@ -39,6 +38,8 @@ class RLPredictor:
         action_params_json: str,
     ) -> float:
         """Q(s, a) for a specific state-action pair."""
+        import numpy as np
+
         obs = np.array([state_features], dtype=np.float32)
         action_vec = np.array(
             [self._action_encoder.encode(action_type, action_params_json)],
@@ -63,6 +64,8 @@ class RLPredictor:
         """
         if not actions:
             return []
+        import numpy as np
+
         obs = np.tile(
             np.array(state_features, dtype=np.float32),
             (len(actions), 1),
@@ -86,7 +89,3 @@ class RLPredictor:
             and (model_dir / "model.d3").exists()
             and (model_dir / "encoder_stats.json").exists()
         )
-
-
-# Suppress unused import warning — numpy is used at runtime via np alias
-_: Any = np
