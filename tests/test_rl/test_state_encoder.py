@@ -130,7 +130,7 @@ class TestStateEncoder:
         enc.save(p)
         data = json.loads(p.read_text())
         assert "mean" in data
-        assert "std" in data
+        assert "m2" in data
         assert "count" in data
 
     def test_encode_before_fit_raises(self) -> None:

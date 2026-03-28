@@ -55,6 +55,7 @@ def create_algorithm(
             critic_learning_rate=config.learning_rate,
             actor_encoder_factory=encoder_factory,
             critic_encoder_factory=encoder_factory,
+            value_encoder_factory=encoder_factory,
         ).create(device=device)
     else:
         msg = f"Unsupported algorithm: {config.algorithm!r}. Use 'cql' or 'iql'."

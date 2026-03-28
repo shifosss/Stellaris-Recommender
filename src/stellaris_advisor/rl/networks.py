@@ -48,7 +48,7 @@ class ValueNetwork:
     def __new__(cls, state_dim: int = 117, **kwargs: Any) -> Any:
         torch = _require_torch()
 
-        class _ValueNetwork(torch.nn.Module):
+        class _ValueNetwork(torch.nn.Module):  # type: ignore[name-defined,misc]
             def __init__(self, state_dim: int) -> None:
                 super().__init__()
                 self.net = _build_mlp(torch, state_dim)
@@ -65,7 +65,7 @@ class QNetwork:
     def __new__(cls, state_dim: int = 117, action_dim: int = 20, **kwargs: Any) -> Any:
         torch = _require_torch()
 
-        class _QNetwork(torch.nn.Module):
+        class _QNetwork(torch.nn.Module):  # type: ignore[name-defined,misc]
             def __init__(self, state_dim: int, action_dim: int) -> None:
                 super().__init__()
                 self.net = _build_mlp(torch, state_dim + action_dim)

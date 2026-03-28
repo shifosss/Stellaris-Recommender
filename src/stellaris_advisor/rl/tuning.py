@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
+from types import MappingProxyType
 from typing import Any
 
 from stellaris_advisor.rl.dataset import RLArrays, build_mdp_dataset
@@ -17,7 +18,7 @@ from stellaris_advisor.rl.evaluation import (
 class TuningResult:
     """Immutable tuning outcome."""
 
-    best_params: dict[str, Any]
+    best_params: MappingProxyType[str, Any]
     best_value: float
     n_trials: int
     study_name: str
@@ -92,7 +93,7 @@ def tune(
     study.optimize(objective, n_trials=n_trials)
 
     return TuningResult(
-        best_params=study.best_trial.params,
+        best_params=MappingProxyType(study.best_trial.params),
         best_value=study.best_trial.value,
         n_trials=n_trials,
         study_name=study.study_name,

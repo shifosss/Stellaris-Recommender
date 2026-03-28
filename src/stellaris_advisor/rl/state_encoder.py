@@ -40,7 +40,9 @@ class StateEncoder:
             state_dim = len(EMPIRE_FEATURE_NAMES) + len(TEMPORAL_FEATURE_NAMES)
         self._state_dim = state_dim
         self._mean: list[float] = [0.0] * state_dim
-        self._var: list[float] = [0.0] * state_dim
+        self._m2: list[float] = [
+            0.0
+        ] * state_dim  # sum of squared deviations (Welford M2)
         self._count: int = 0
 
     @property
@@ -51,7 +53,10 @@ class StateEncoder:
     def stats(self) -> NormStats:
         return NormStats(
             mean=tuple(self._mean),
-            std=tuple(math.sqrt(v) for v in self._var),
+            std=tuple(
+                math.sqrt(self._m2[i] / max(self._count - 1, 1))
+                for i in range(self._state_dim)
+            ),
             count=self._count,
         )
 
@@ -67,15 +72,13 @@ class StateEncoder:
                 mean[i] += row[i]
         for i in range(dim):
             mean[i] /= n
-        var = [0.0] * dim
+        m2 = [0.0] * dim
         for row in features:
             for i in range(dim):
                 diff = row[i] - mean[i]
-                var[i] += diff * diff
-        for i in range(dim):
-            var[i] /= max(n - 1, 1)
+                m2[i] += diff * diff
         self._mean = mean
-        self._var = var
+        self._m2 = m2
         self._count = n
 
     def update(self, features: list[list[float]]) -> None:
@@ -86,7 +89,14 @@ class StateEncoder:
                 delta = row[i] - self._mean[i]
                 self._mean[i] += delta / self._count
                 delta2 = row[i] - self._mean[i]
-                self._var[i] += (delta * delta2 - self._var[i]) / self._count
+                self._m2[i] += delta * delta2  # true Welford M2 accumulation
+
+    def _std(self) -> list[float]:
+        """Compute per-feature std from M2 accumulator."""
+        return [
+            math.sqrt(self._m2[i] / max(self._count - 1, 1))
+            for i in range(self._state_dim)
+        ]
 
     def encode(self, features: list[float]) -> torch.Tensor:
         """Single vector → normalised float32 tensor."""
@@ -95,8 +105,9 @@ class StateEncoder:
         if self._count == 0:
             msg = "StateEncoder has not been fit — call fit() or load() first"
             raise RuntimeError(msg)
+        std = self._std()
         normed = [
-            (features[i] - self._mean[i]) / max(math.sqrt(self._var[i]), _EPSILON)
+            (features[i] - self._mean[i]) / max(std[i], _EPSILON)
             for i in range(self._state_dim)
         ]
         return torch.tensor(normed, dtype=torch.float32)
@@ -108,10 +119,11 @@ class StateEncoder:
         if self._count == 0:
             msg = "StateEncoder has not been fit — call fit() or load() first"
             raise RuntimeError(msg)
+        std = self._std()
         rows: list[list[float]] = []
         for row in features:
             normed = [
-                (row[i] - self._mean[i]) / max(math.sqrt(self._var[i]), _EPSILON)
+                (row[i] - self._mean[i]) / max(std[i], _EPSILON)
                 for i in range(self._state_dim)
             ]
             rows.append(normed)
@@ -122,8 +134,7 @@ class StateEncoder:
         data = {
             "state_dim": self._state_dim,
             "mean": self._mean,
-            "std": [math.sqrt(v) for v in self._var],
-            "var": self._var,
+            "m2": self._m2,
             "count": self._count,
         }
         path.write_text(json.dumps(data, indent=2))
@@ -133,5 +144,5 @@ class StateEncoder:
         data = json.loads(path.read_text())
         self._state_dim = data["state_dim"]
         self._mean = data["mean"]
-        self._var = data["var"]
+        self._m2 = data["m2"]
         self._count = data["count"]

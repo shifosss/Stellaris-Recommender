@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 from typing import TYPE_CHECKING
 
@@ -42,7 +43,8 @@ _NUM_PARAMS: int = 10
 
 def _hash_param(value: str) -> float:
     """Deterministic hash of a string param to [0, 1]."""
-    return (hash(value) % 10_000) / 10_000.0
+    digest = hashlib.sha256(value.encode()).hexdigest()
+    return int(digest[:8], 16) / 0xFFFFFFFF
 
 
 def _parse_params(action_params_json: str) -> dict[str, str]:
@@ -50,7 +52,8 @@ def _parse_params(action_params_json: str) -> dict[str, str]:
     if not action_params_json or action_params_json == "{}":
         return {}
     try:
-        return json.loads(action_params_json)
+        result: dict[str, str] = json.loads(action_params_json)
+        return result
     except (json.JSONDecodeError, TypeError):
         return {}
 

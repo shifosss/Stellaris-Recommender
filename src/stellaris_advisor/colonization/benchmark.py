@@ -2,6 +2,7 @@
 
 Works without ML imports — hardcoded_defaults() provides degraded mode.
 """
+
 from __future__ import annotations
 
 import json
