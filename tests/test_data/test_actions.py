@@ -1,11 +1,16 @@
 """Tests for action extraction from consecutive EmpireState diffs."""
+
 from __future__ import annotations
 
 from types import MappingProxyType
 
 import pytest
 
-from stellaris_advisor.parser.models import CouncilPosition, FleetState, MegastructureState
+from stellaris_advisor.parser.models import (
+    CouncilPosition,
+    FleetState,
+    MegastructureState,
+)
 from stellaris_advisor.data.actions import (
     ACTION_BUILDING_CONSTRUCTED,
     ACTION_COUNCIL_REASSIGNED,
@@ -41,7 +46,9 @@ def _fleet(fid: int, ships: dict[str, int]) -> FleetState:
 
 
 def _mega(mtype: str, system_id: int, stage: int) -> MegastructureState:
-    return MegastructureState(megastructure_type=mtype, stage=stage, system_id=system_id)
+    return MegastructureState(
+        megastructure_type=mtype, stage=stage, system_id=system_id
+    )
 
 
 def _council_pos(pos_type: str, leader_id: int | None) -> CouncilPosition:
@@ -87,20 +94,32 @@ class TestTechResearched:
     def test_single_new_tech_detected(self) -> None:
         prev = make_empire(researched_techs=frozenset({"tech_a"}))
         curr = make_empire(researched_techs=frozenset({"tech_a", "tech_b"}))
-        actions = [a for a in extract_actions(curr, prev) if a.action_type == ACTION_TECH_RESEARCHED]
+        actions = [
+            a
+            for a in extract_actions(curr, prev)
+            if a.action_type == ACTION_TECH_RESEARCHED
+        ]
         assert len(actions) == 1
         assert actions[0].params["tech_id"] == "tech_b"
 
     def test_multiple_new_techs(self) -> None:
         prev = make_empire(researched_techs=frozenset())
         curr = make_empire(researched_techs=frozenset({"tech_a", "tech_b"}))
-        actions = [a for a in extract_actions(curr, prev) if a.action_type == ACTION_TECH_RESEARCHED]
+        actions = [
+            a
+            for a in extract_actions(curr, prev)
+            if a.action_type == ACTION_TECH_RESEARCHED
+        ]
         assert len(actions) == 2
         assert {a.params["tech_id"] for a in actions} == {"tech_a", "tech_b"}
 
     def test_no_tech_change_produces_no_action(self) -> None:
         emp = make_empire(researched_techs=frozenset({"tech_a"}))
-        actions = [a for a in extract_actions(emp, emp) if a.action_type == ACTION_TECH_RESEARCHED]
+        actions = [
+            a
+            for a in extract_actions(emp, emp)
+            if a.action_type == ACTION_TECH_RESEARCHED
+        ]
         assert actions == []
 
 
@@ -111,7 +130,11 @@ class TestBuildingConstructed:
         p_curr = make_planet(id=1, buildings=("building_capital", "building_factory_1"))
         prev = make_empire(owned_planets=(p_prev,))
         curr = make_empire(owned_planets=(p_curr,))
-        actions = [a for a in extract_actions(curr, prev) if a.action_type == ACTION_BUILDING_CONSTRUCTED]
+        actions = [
+            a
+            for a in extract_actions(curr, prev)
+            if a.action_type == ACTION_BUILDING_CONSTRUCTED
+        ]
         assert len(actions) == 1
         assert actions[0].params["planet_id"] == "1"
         assert actions[0].params["building_type"] == "building_factory_1"
@@ -120,14 +143,22 @@ class TestBuildingConstructed:
         p_new = make_planet(id=2, buildings=("building_capital",))
         prev = make_empire(owned_planets=())
         curr = make_empire(owned_planets=(p_new,))
-        actions = [a for a in extract_actions(curr, prev) if a.action_type == ACTION_BUILDING_CONSTRUCTED]
+        actions = [
+            a
+            for a in extract_actions(curr, prev)
+            if a.action_type == ACTION_BUILDING_CONSTRUCTED
+        ]
         assert len(actions) == 1
         assert actions[0].params["planet_id"] == "2"
 
     def test_no_building_change_produces_no_action(self) -> None:
         p = make_planet(id=1, buildings=("building_capital",))
         emp = make_empire(owned_planets=(p,))
-        actions = [a for a in extract_actions(emp, emp) if a.action_type == ACTION_BUILDING_CONSTRUCTED]
+        actions = [
+            a
+            for a in extract_actions(emp, emp)
+            if a.action_type == ACTION_BUILDING_CONSTRUCTED
+        ]
         assert actions == []
 
 
@@ -138,7 +169,11 @@ class TestDistrictBuilt:
         p_curr = make_planet(id=1, districts={"district_city": 2})
         prev = make_empire(owned_planets=(p_prev,))
         curr = make_empire(owned_planets=(p_curr,))
-        actions = [a for a in extract_actions(curr, prev) if a.action_type == ACTION_DISTRICT_BUILT]
+        actions = [
+            a
+            for a in extract_actions(curr, prev)
+            if a.action_type == ACTION_DISTRICT_BUILT
+        ]
         assert len(actions) == 1
         assert actions[0].params["planet_id"] == "1"
         assert actions[0].params["district_type"] == "district_city"
@@ -147,7 +182,11 @@ class TestDistrictBuilt:
     def test_no_district_change_produces_no_action(self) -> None:
         p = make_planet(id=1, districts={"district_city": 2})
         emp = make_empire(owned_planets=(p,))
-        actions = [a for a in extract_actions(emp, emp) if a.action_type == ACTION_DISTRICT_BUILT]
+        actions = [
+            a
+            for a in extract_actions(emp, emp)
+            if a.action_type == ACTION_DISTRICT_BUILT
+        ]
         assert actions == []
 
 
@@ -156,13 +195,21 @@ class TestSystemClaimed:
     def test_new_system_detected(self) -> None:
         prev = make_empire(owned_systems=(1, 2))
         curr = make_empire(owned_systems=(1, 2, 3))
-        actions = [a for a in extract_actions(curr, prev) if a.action_type == ACTION_SYSTEM_CLAIMED]
+        actions = [
+            a
+            for a in extract_actions(curr, prev)
+            if a.action_type == ACTION_SYSTEM_CLAIMED
+        ]
         assert len(actions) == 1
         assert actions[0].params["system_id"] == "3"
 
     def test_no_system_change_produces_no_action(self) -> None:
         emp = make_empire(owned_systems=(1, 2))
-        actions = [a for a in extract_actions(emp, emp) if a.action_type == ACTION_SYSTEM_CLAIMED]
+        actions = [
+            a
+            for a in extract_actions(emp, emp)
+            if a.action_type == ACTION_SYSTEM_CLAIMED
+        ]
         assert actions == []
 
 
@@ -171,7 +218,11 @@ class TestShipsBuilt:
     def test_count_increase_in_existing_fleet(self) -> None:
         prev = make_empire(fleets=(_fleet(1, {"corvette": 2}),))
         curr = make_empire(fleets=(_fleet(1, {"corvette": 5}),))
-        actions = [a for a in extract_actions(curr, prev) if a.action_type == ACTION_SHIPS_BUILT]
+        actions = [
+            a
+            for a in extract_actions(curr, prev)
+            if a.action_type == ACTION_SHIPS_BUILT
+        ]
         assert len(actions) == 1
         assert actions[0].params["fleet_id"] == "1"
         assert actions[0].params["ship_type"] == "corvette"
@@ -180,7 +231,11 @@ class TestShipsBuilt:
     def test_ships_in_new_fleet_detected(self) -> None:
         prev = make_empire(fleets=())
         curr = make_empire(fleets=(_fleet(2, {"destroyer": 2}),))
-        actions = [a for a in extract_actions(curr, prev) if a.action_type == ACTION_SHIPS_BUILT]
+        actions = [
+            a
+            for a in extract_actions(curr, prev)
+            if a.action_type == ACTION_SHIPS_BUILT
+        ]
         assert len(actions) == 1
         assert actions[0].params["fleet_id"] == "2"
         assert actions[0].params["ship_type"] == "destroyer"
@@ -188,7 +243,9 @@ class TestShipsBuilt:
 
     def test_no_ship_change_produces_no_action(self) -> None:
         emp = make_empire(fleets=(_fleet(1, {"corvette": 3}),))
-        actions = [a for a in extract_actions(emp, emp) if a.action_type == ACTION_SHIPS_BUILT]
+        actions = [
+            a for a in extract_actions(emp, emp) if a.action_type == ACTION_SHIPS_BUILT
+        ]
         assert actions == []
 
 
@@ -196,14 +253,24 @@ class TestShipsBuilt:
 class TestTraditionUnlocked:
     def test_new_tradition_detected(self) -> None:
         prev = make_empire(traditions_unlocked=("tr_expansion_adopting",))
-        curr = make_empire(traditions_unlocked=("tr_expansion_adopting", "tr_expansion_finish"))
-        actions = [a for a in extract_actions(curr, prev) if a.action_type == ACTION_TRADITION_UNLOCKED]
+        curr = make_empire(
+            traditions_unlocked=("tr_expansion_adopting", "tr_expansion_finish")
+        )
+        actions = [
+            a
+            for a in extract_actions(curr, prev)
+            if a.action_type == ACTION_TRADITION_UNLOCKED
+        ]
         assert len(actions) == 1
         assert actions[0].params["tradition_id"] == "tr_expansion_finish"
 
     def test_no_tradition_change_produces_no_action(self) -> None:
         emp = make_empire(traditions_unlocked=("tr_expansion_adopting",))
-        actions = [a for a in extract_actions(emp, emp) if a.action_type == ACTION_TRADITION_UNLOCKED]
+        actions = [
+            a
+            for a in extract_actions(emp, emp)
+            if a.action_type == ACTION_TRADITION_UNLOCKED
+        ]
         assert actions == []
 
 
@@ -212,13 +279,17 @@ class TestPerkTaken:
     def test_new_perk_detected(self) -> None:
         prev = make_empire(ascension_perks=())
         curr = make_empire(ascension_perks=("ap_transcendence",))
-        actions = [a for a in extract_actions(curr, prev) if a.action_type == ACTION_PERK_TAKEN]
+        actions = [
+            a for a in extract_actions(curr, prev) if a.action_type == ACTION_PERK_TAKEN
+        ]
         assert len(actions) == 1
         assert actions[0].params["perk_id"] == "ap_transcendence"
 
     def test_no_perk_change_produces_no_action(self) -> None:
         emp = make_empire(ascension_perks=("ap_transcendence",))
-        actions = [a for a in extract_actions(emp, emp) if a.action_type == ACTION_PERK_TAKEN]
+        actions = [
+            a for a in extract_actions(emp, emp) if a.action_type == ACTION_PERK_TAKEN
+        ]
         assert actions == []
 
 
@@ -227,7 +298,11 @@ class TestMegastructureBuilt:
     def test_new_megastructure_detected(self) -> None:
         prev = make_empire(megastructures=())
         curr = make_empire(megastructures=(_mega("megastructure_dyson_sphere", 10, 1),))
-        actions = [a for a in extract_actions(curr, prev) if a.action_type == ACTION_MEGASTRUCTURE_BUILT]
+        actions = [
+            a
+            for a in extract_actions(curr, prev)
+            if a.action_type == ACTION_MEGASTRUCTURE_BUILT
+        ]
         assert len(actions) == 1
         assert actions[0].params["megastructure_type"] == "megastructure_dyson_sphere"
         assert actions[0].params["stage"] == "1"
@@ -235,13 +310,21 @@ class TestMegastructureBuilt:
     def test_stage_advance_detected(self) -> None:
         prev = make_empire(megastructures=(_mega("megastructure_dyson_sphere", 10, 1),))
         curr = make_empire(megastructures=(_mega("megastructure_dyson_sphere", 10, 2),))
-        actions = [a for a in extract_actions(curr, prev) if a.action_type == ACTION_MEGASTRUCTURE_BUILT]
+        actions = [
+            a
+            for a in extract_actions(curr, prev)
+            if a.action_type == ACTION_MEGASTRUCTURE_BUILT
+        ]
         assert len(actions) == 1
         assert actions[0].params["stage"] == "2"
 
     def test_no_megastructure_change_produces_no_action(self) -> None:
         emp = make_empire(megastructures=(_mega("megastructure_dyson_sphere", 10, 1),))
-        actions = [a for a in extract_actions(emp, emp) if a.action_type == ACTION_MEGASTRUCTURE_BUILT]
+        actions = [
+            a
+            for a in extract_actions(emp, emp)
+            if a.action_type == ACTION_MEGASTRUCTURE_BUILT
+        ]
         assert actions == []
 
 
@@ -250,7 +333,11 @@ class TestPolicyChanged:
     def test_changed_policy_detected(self) -> None:
         prev = make_empire(policies=MappingProxyType({"economic": "socialism"}))
         curr = make_empire(policies=MappingProxyType({"economic": "capitalism"}))
-        actions = [a for a in extract_actions(curr, prev) if a.action_type == ACTION_POLICY_CHANGED]
+        actions = [
+            a
+            for a in extract_actions(curr, prev)
+            if a.action_type == ACTION_POLICY_CHANGED
+        ]
         assert len(actions) == 1
         assert actions[0].params["policy_category"] == "economic"
         assert actions[0].params["new_value"] == "capitalism"
@@ -258,7 +345,11 @@ class TestPolicyChanged:
 
     def test_no_policy_change_produces_no_action(self) -> None:
         emp = make_empire(policies=MappingProxyType({"economic": "socialism"}))
-        actions = [a for a in extract_actions(emp, emp) if a.action_type == ACTION_POLICY_CHANGED]
+        actions = [
+            a
+            for a in extract_actions(emp, emp)
+            if a.action_type == ACTION_POLICY_CHANGED
+        ]
         assert actions == []
 
 
@@ -267,7 +358,11 @@ class TestCouncilReassigned:
     def test_leader_change_detected(self) -> None:
         prev = make_empire(council_positions=(_council_pos("chancellor", 1),))
         curr = make_empire(council_positions=(_council_pos("chancellor", 2),))
-        actions = [a for a in extract_actions(curr, prev) if a.action_type == ACTION_COUNCIL_REASSIGNED]
+        actions = [
+            a
+            for a in extract_actions(curr, prev)
+            if a.action_type == ACTION_COUNCIL_REASSIGNED
+        ]
         assert len(actions) == 1
         assert actions[0].params["position_type"] == "chancellor"
         assert actions[0].params["new_leader_id"] == "2"
@@ -276,12 +371,20 @@ class TestCouncilReassigned:
     def test_new_position_filled(self) -> None:
         prev = make_empire(council_positions=())
         curr = make_empire(council_positions=(_council_pos("chancellor", 1),))
-        actions = [a for a in extract_actions(curr, prev) if a.action_type == ACTION_COUNCIL_REASSIGNED]
+        actions = [
+            a
+            for a in extract_actions(curr, prev)
+            if a.action_type == ACTION_COUNCIL_REASSIGNED
+        ]
         assert len(actions) == 1
         assert actions[0].params["new_leader_id"] == "1"
         assert actions[0].params["old_leader_id"] == ""
 
     def test_no_council_change_produces_no_action(self) -> None:
         emp = make_empire(council_positions=(_council_pos("chancellor", 1),))
-        actions = [a for a in extract_actions(emp, emp) if a.action_type == ACTION_COUNCIL_REASSIGNED]
+        actions = [
+            a
+            for a in extract_actions(emp, emp)
+            if a.action_type == ACTION_COUNCIL_REASSIGNED
+        ]
         assert actions == []

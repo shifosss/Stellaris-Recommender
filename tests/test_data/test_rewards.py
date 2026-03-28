@@ -1,4 +1,5 @@
 """Tests for reward computation (composite scoring + delta reward + terminal bonus)."""
+
 from __future__ import annotations
 
 from types import MappingProxyType
@@ -118,13 +119,17 @@ class TestComputeReward:
 
     def test_non_terminal_ignores_rank_args(self) -> None:
         base = compute_reward(0.6, 0.4)
-        with_rank = compute_reward(0.6, 0.4, is_terminal=False, final_rank=1, num_empires=4)
+        with_rank = compute_reward(
+            0.6, 0.4, is_terminal=False, final_rank=1, num_empires=4
+        )
         assert base == pytest.approx(with_rank)
 
     def test_terminal_bonus_rank_1_of_4(self) -> None:
         # bonus = TERMINAL_BONUS * (4 - 1) / (4 - 1) = 1.0
         base = 0.1
-        result = compute_reward(base + 0.0, 0.0, is_terminal=True, final_rank=1, num_empires=4)
+        result = compute_reward(
+            base + 0.0, 0.0, is_terminal=True, final_rank=1, num_empires=4
+        )
         expected = base + TERMINAL_BONUS * 1.0
         assert result == pytest.approx(expected)
 

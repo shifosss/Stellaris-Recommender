@@ -1,4 +1,5 @@
 """Tests for the batch ingestion pipeline."""
+
 from __future__ import annotations
 
 import shutil
@@ -136,8 +137,12 @@ class TestIngestSaves:
         shutil.copy(SAMPLE_SAVE, save_dir / "save_02.sav")
         result = ingest_saves(save_dir, tmp_path / "out", game_id="g2")
         table = pq.read_table(str(result.transitions_path))
-        # 2 empires, both identical saves → no action diff → 2 no-op transition rows
-        assert table.num_rows >= 0  # valid parquet, rows depend on action extraction
+        # 2 empires, identical saves → no action diff → 1 no-op row per empire = 2 rows
+        assert table.num_rows == 2
+        assert "action_type" in table.schema.names
+        assert "reward" in table.schema.names
+        assert all(v.as_py() == "" for v in table.column("action_type"))
+        assert all(isinstance(v.as_py(), float) for v in table.column("reward"))
 
     def test_invalid_save_records_error_and_continues(self, tmp_path: Path) -> None:
         save_dir = tmp_path / "saves"

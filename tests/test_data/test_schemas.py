@@ -3,6 +3,7 @@
 Requires pyarrow (optional [ml] dependency). All tests are marked
 @pytest.mark.integration and skipped if pyarrow is not installed.
 """
+
 from __future__ import annotations
 
 import pytest
@@ -41,9 +42,9 @@ class TestEmpireFeaturesSchema:
 
         for name in EMPIRE_FEATURE_NAMES:
             field = EMPIRE_FEATURES_SCHEMA.field(name)
-            assert field.type == pyarrow.float64(), (
-                f"Column '{name}' should be float64, got {field.type}"
-            )
+            assert (
+                field.type == pyarrow.float64()
+            ), f"Column '{name}' should be float64, got {field.type}"
 
     def test_column_count(self) -> None:
         from stellaris_advisor.data.schemas import EMPIRE_FEATURES_SCHEMA
@@ -79,9 +80,9 @@ class TestSystemFeaturesSchema:
 
         for name in SYSTEM_FEATURE_NAMES:
             field = SYSTEM_FEATURES_SCHEMA.field(name)
-            assert field.type == pyarrow.float64(), (
-                f"Column '{name}' should be float64, got {field.type}"
-            )
+            assert (
+                field.type == pyarrow.float64()
+            ), f"Column '{name}' should be float64, got {field.type}"
 
     def test_column_count(self) -> None:
         from stellaris_advisor.data.schemas import SYSTEM_FEATURES_SCHEMA
@@ -113,9 +114,9 @@ class TestTransitionsSchema:
         }
         for col, expected_type in expected_types.items():
             field = TRANSITIONS_SCHEMA.field(col)
-            assert field.type == expected_type, (
-                f"Column '{col}' should be {expected_type}, got {field.type}"
-            )
+            assert (
+                field.type == expected_type
+            ), f"Column '{col}' should be {expected_type}, got {field.type}"
 
     def test_has_state_feature_list_columns(self) -> None:
         from stellaris_advisor.data.schemas import TRANSITIONS_SCHEMA
@@ -155,6 +156,6 @@ class TestGameMetadataSchema:
         }
         for col, expected_type in expected_types.items():
             field = GAME_METADATA_SCHEMA.field(col)
-            assert field.type == expected_type, (
-                f"Column '{col}' should be {expected_type}, got {field.type}"
-            )
+            assert (
+                field.type == expected_type
+            ), f"Column '{col}' should be {expected_type}, got {field.type}"
