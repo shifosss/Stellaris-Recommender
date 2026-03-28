@@ -1,0 +1,94 @@
+# Civics — synthetic fixture
+
+civic_warrior_culture = {
+	name = civic_warrior_culture
+	description = civic_warrior_culture_desc
+
+	playable = { always = yes }
+
+	potential = {
+		ethics = {
+			OR = {
+				value = ethic_militarist
+				value = ethic_fanatic_militarist
+			}
+		}
+		authority = {
+			NOT = { value = auth_corporate }
+		}
+	}
+
+	modifier = {
+		ship_fire_rate_mult = 0.05
+		army_damage_mult = 0.15
+	}
+
+	ai_weight = {
+		weight = 2
+		modifier = {
+			factor = 2.0
+			has_ethic = ethic_fanatic_militarist
+		}
+	}
+}
+
+civic_scientific_directorate = {
+	name = civic_scientific_directorate
+	description = civic_scientific_directorate_desc
+
+	playable = { always = yes }
+
+	potential = {
+		ethics = {
+			NOT = { value = ethic_gestalt_consciousness }
+		}
+		authority = {
+			value = auth_oligarchic
+		}
+	}
+
+	modifier = {
+		all_technology_research_speed = 0.10
+		pop_government_ethic_attraction = 0.10
+	}
+
+	ai_weight = {
+		weight = 2
+		modifier = {
+			factor = 1.5
+			has_ethic = ethic_materialist
+		}
+	}
+}
+
+civic_agrarian_idyll = {
+	name = civic_agrarian_idyll
+	description = civic_agrarian_idyll_desc
+
+	playable = { always = yes }
+
+	potential = {
+		authority = {
+			OR = {
+				value = auth_democratic
+				value = auth_oligarchic
+			}
+		}
+		ethics = {
+			NOT = { value = ethic_gestalt_consciousness }
+		}
+	}
+
+	modifier = {
+		planet_farmers_food_produces_mult = 0.10
+		planet_farmers_upkeep_mult = -0.10
+	}
+
+	ai_weight = {
+		weight = 1
+		modifier = {
+			factor = 1.5
+			has_tradition = tr_expansion_finish
+		}
+	}
+}

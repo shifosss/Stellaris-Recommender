@@ -1,0 +1,154 @@
+# Buildings — synthetic fixture for testing
+
+building_capital_1 = {
+	base_buildtime = 0
+	category = government
+	can_build = no
+	can_demolish = no
+
+	cost = {
+		minerals = 0
+	}
+
+	upkeep = {
+		energy = 3
+	}
+
+	planet_modifier = {
+		planet_housing_add = 5
+		job_politician_add = 1
+		job_clerk_add = 2
+	}
+}
+
+building_capital_2 = {
+	base_buildtime = 720
+	category = government
+	can_build = no
+
+	prerequisites = { }
+	upgrades_from = building_capital_1
+
+	cost = {
+		minerals = 500
+	}
+
+	upkeep = {
+		energy = 5
+	}
+
+	planet_modifier = {
+		planet_housing_add = 8
+		job_politician_add = 2
+		job_clerk_add = 3
+	}
+}
+
+building_research_lab_1 = {
+	base_buildtime = 360
+	category = research
+
+	prerequisites = { "tech_power_hub_1" }
+
+	cost = {
+		minerals = 150
+	}
+
+	upkeep = {
+		energy = 2
+	}
+
+	planet_modifier = {
+		job_researcher_add = 2
+	}
+
+	upgrades = { building_research_lab_2 }
+}
+
+building_research_lab_2 = {
+	base_buildtime = 720
+	category = research
+
+	prerequisites = { "tech_neural_implants" }
+	upgrades_from = building_research_lab_1
+
+	cost = {
+		minerals = 500
+	}
+
+	upkeep = {
+		energy = 5
+	}
+
+	planet_modifier = {
+		job_researcher_add = 4
+	}
+}
+
+building_generator_1 = {
+	base_buildtime = 360
+	category = resource
+
+	prerequisites = { "tech_power_hub_1" }
+
+	cost = {
+		minerals = 150
+	}
+
+	upkeep = {
+		energy = 2
+	}
+
+	planet_modifier = {
+		job_technician_add = 2
+	}
+
+	upgrades = { building_generator_2 }
+}
+
+building_generator_2 = {
+	base_buildtime = 720
+	category = resource
+
+	prerequisites = { "tech_power_hub_2" }
+	upgrades_from = building_generator_1
+
+	cost = {
+		minerals = 400
+	}
+
+	upkeep = {
+		energy = 5
+	}
+
+	planet_modifier = {
+		job_technician_add = 4
+	}
+}
+
+building_alloy_foundry = {
+	base_buildtime = 480
+	category = manufacturing
+
+	prerequisites = { "tech_mining_network_1" }
+
+	cost = {
+		minerals = 500
+	}
+
+	upkeep = {
+		energy = 5
+		minerals = 20
+	}
+
+	planet_modifier = {
+		job_foundry_worker_add = 3
+	}
+
+	planet_class = {
+		pc_continental = yes
+		pc_arid = yes
+		pc_ocean = yes
+		pc_tundra = yes
+	}
+}

@@ -1,0 +1,104 @@
+# Individual traditions — synthetic fixture for testing
+
+# --- Expansion tree ---
+
+tr_expansion_adopt = {
+	category = tr_expansion
+	modifier = {
+		colonization_speed_mult = 0.25
+	}
+}
+
+tr_expansion_frugal_expansion = {
+	category = tr_expansion
+	cost = 100
+	modifier = {
+		planet_colony_development_speed_mult = 0.15
+	}
+	prerequisites = { }
+	ai_weight = { weight = 1 }
+}
+
+tr_expansion_world_shaper = {
+	category = tr_expansion
+	cost = 100
+	modifier = {
+		terraforming_cost_mult = -0.25
+	}
+	prerequisites = { tr_expansion_frugal_expansion }
+	ai_weight = { weight = 1 }
+}
+
+tr_expansion_finish = {
+	category = tr_expansion
+	modifier = {
+		pop_growth_speed = 0.15
+	}
+	prerequisites = { }
+}
+
+# --- Domination tree ---
+
+tr_domination_adopt = {
+	category = tr_domination
+	modifier = {
+		governing_ethics_attraction_mult = 0.20
+	}
+}
+
+tr_domination_thought_police = {
+	category = tr_domination
+	cost = 100
+	modifier = {
+		pop_political_power = -0.10
+		pop_faction_influence_gen = -0.10
+	}
+	prerequisites = { }
+	ai_weight = { weight = 1 }
+}
+
+tr_domination_finish = {
+	category = tr_domination
+	modifier = {
+		starbase_influence_cost_mult = -0.25
+	}
+	prerequisites = { }
+}
+
+# --- Prosperity tree ---
+
+tr_prosperity_adopt = {
+	category = tr_prosperity
+	modifier = {
+		planet_jobs_energy_produces_mult = 0.05
+	}
+}
+
+tr_prosperity_marketplace_ideas = {
+	category = tr_prosperity
+	cost = 100
+	modifier = {
+		trade_value_mult = 0.10
+	}
+	prerequisites = { }
+	ai_weight = { weight = 1 }
+}
+
+tr_prosperity_good_jobs = {
+	category = tr_prosperity
+	cost = 100
+	modifier = {
+		planet_jobs_consumer_goods_upkeep_mult = -0.10
+	}
+	prerequisites = { tr_prosperity_marketplace_ideas }
+	ai_weight = { weight = 1 }
+}
+
+tr_prosperity_finish = {
+	category = tr_prosperity
+	modifier = {
+		planet_jobs_minerals_produces_mult = 0.10
+		planet_jobs_energy_produces_mult = 0.10
+	}
+	prerequisites = { }
+}

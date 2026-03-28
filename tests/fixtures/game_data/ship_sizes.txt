@@ -1,0 +1,43 @@
+# Ship sizes — synthetic fixture
+
+corvette = {
+	name = corvette
+	ship_class = military
+	max_speed = 1.20
+	max_hitpoints = 200
+	modifier = { evasion_mult = 0.60 }
+	size_restriction = { corvette }
+	cost = { alloys = 40 }
+	upkeep = { energy = 1 }
+	prerequisites = tech_corvettes
+	naval_coverage = 1
+	base_buildtime = 60
+}
+
+destroyer = {
+	name = destroyer
+	ship_class = military
+	max_speed = 1.00
+	max_hitpoints = 500
+	modifier = { evasion_mult = 0.30 }
+	size_restriction = { destroyer }
+	cost = { alloys = 80 }
+	upkeep = { energy = 2 }
+	prerequisites = tech_destroyers
+	naval_coverage = 2
+	base_buildtime = 120
+}
+
+cruiser = {
+	name = cruiser
+	ship_class = military
+	max_speed = 0.85
+	max_hitpoints = 1100
+	modifier = { evasion_mult = 0.10 }
+	size_restriction = { cruiser }
+	cost = { alloys = 200 }
+	upkeep = { energy = 4 }
+	prerequisites = tech_cruisers
+	naval_coverage = 4
+	base_buildtime = 240
+}

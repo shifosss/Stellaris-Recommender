@@ -1,0 +1,91 @@
+# Physics technologies — synthetic fixture for testing
+
+tech_lasers_1 = {
+	cost = 1000
+	area = physics
+	tier = 1
+	category = { field_manipulation }
+	prerequisites = { }
+	weight = 100
+
+	weight_modifier = {
+		factor = 1.5
+		modifier = {
+			factor = 2.0
+			has_tradition = tr_expansion_finish
+		}
+	}
+
+	ai_weight = {
+		factor = 1.25
+	}
+}
+
+tech_lasers_2 = {
+	cost = 3000
+	area = physics
+	tier = 2
+	category = { field_manipulation }
+	prerequisites = { "tech_lasers_1" }
+	weight = 75
+
+	weight_modifier = {
+		factor = 1.25
+		modifier = {
+			factor = 1.5
+			has_technology = tech_shields_1
+		}
+	}
+
+	ai_weight = {
+		factor = 1.0
+	}
+}
+
+tech_lasers_3 = {
+	cost = 6000
+	area = physics
+	tier = 3
+	category = { field_manipulation }
+	prerequisites = { "tech_lasers_2" }
+	weight = 45
+	is_rare = yes
+
+	weight_modifier = {
+		factor = 1.5
+		modifier = {
+			factor = 2.0
+			has_ethic = ethic_fanatic_militarist
+		}
+	}
+
+	ai_weight = {
+		factor = 0.75
+	}
+}
+
+tech_shields_1 = {
+	cost = 1000
+	area = physics
+	tier = 1
+	category = { particles }
+	prerequisites = { }
+	weight = 100
+
+	ai_weight = {
+		factor = 1.0
+	}
+}
+
+tech_shields_2 = {
+	cost = 3000
+	area = physics
+	tier = 2
+	category = { particles }
+	prerequisites = { "tech_shields_1" }
+	weight = 75
+
+	ai_weight = {
+		factor = 1.0
+	}
+}

@@ -1,0 +1,94 @@
+# Ascension perks — synthetic fixture
+
+# Tier 0 — no prerequisites
+ap_one_vision = {
+	tier = 0
+	modifier = {
+		pop_government_ethic_attraction = 0.15
+		council_agenda_progress_speed = 0.20
+	}
+	potential = {
+		NOT = { has_ascension_perk = ap_one_vision }
+	}
+	possible = { always = yes }
+	on_enabled = { }
+	ai_weight = { weight = 1 }
+}
+
+ap_executive_vigor = {
+	tier = 0
+	modifier = { country_edict_cap_add = 1 }
+	potential = {
+		NOT = { has_ascension_perk = ap_executive_vigor }
+	}
+	possible = { always = yes }
+	on_enabled = { }
+	ai_weight = { weight = 1 }
+}
+
+# Tier 1 — require 1 perk each
+ap_mastery_of_nature = {
+	tier = 1
+	required_perks = { ap_one_vision }
+	modifier = {
+		planet_clearance_chance_mult = 0.50
+		max_districts_add = 2
+	}
+	potential = {
+		NOT = { has_ascension_perk = ap_mastery_of_nature }
+		has_ascension_perk = ap_one_vision
+	}
+	possible = { always = yes }
+	on_enabled = { }
+	ai_weight = { weight = 1 }
+}
+
+ap_technological_mastery = {
+	tier = 1
+	required_perks = { ap_executive_vigor }
+	modifier = { all_technology_research_speed = 0.10 }
+	potential = {
+		NOT = { has_ascension_perk = ap_technological_mastery }
+		has_ascension_perk = ap_executive_vigor
+	}
+	possible = { always = yes }
+	on_enabled = { }
+	ai_weight = { weight = 1 }
+}
+
+# Tier 2 — require 2 perks, with mutual exclusion
+ap_evolutionary_mastery = {
+	tier = 2
+	required_traditions = 3
+	required_perks = { ap_mastery_of_nature ap_technological_mastery }
+	excluded_perks = { ap_synthetic_evolution }
+	modifier = { bio_pop_growth_speed = 0.20 }
+	potential = {
+		NOT = { has_ascension_perk = ap_evolutionary_mastery }
+		NOT = { has_ascension_perk = ap_synthetic_evolution }
+	}
+	possible = {
+		NOT = { has_ethic = ethic_gestalt_consciousness }
+	}
+	on_enabled = { }
+	ai_weight = { weight = 1 }
+}
+
+ap_synthetic_evolution = {
+	tier = 2
+	required_traditions = 4
+	required_perks = { ap_technological_mastery }
+	excluded_perks = { ap_evolutionary_mastery }
+	modifier = { pop_robotic_production_mult = 0.15 }
+	potential = {
+		NOT = { has_ascension_perk = ap_synthetic_evolution }
+		NOT = { has_ascension_perk = ap_evolutionary_mastery }
+		has_tradition = tr_expansion_finish
+	}
+	possible = {
+		NOT = { has_ethic = ethic_gestalt_consciousness }
+		has_technology = tech_neural_implants
+	}
+	on_enabled = { }
+	ai_weight = { weight = 1 }
+}

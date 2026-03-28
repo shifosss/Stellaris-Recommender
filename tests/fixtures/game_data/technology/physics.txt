@@ -1,0 +1,61 @@
+# Physics technologies — synthetic fixture
+
+tech_basic_science = {
+	cost = 0
+	area = physics
+	tier = 0
+	category = computing
+	weight = 100
+	start_tech = yes
+}
+
+tech_lasers = {
+	cost = 1000
+	area = physics
+	tier = 0
+	category = field_manipulation
+	weight = 100
+
+	weight_modifier = {
+		factor = 1.5
+		modifier = {
+			factor = 2.0
+			has_tradition = tr_discovery_finish
+		}
+	}
+}
+
+tech_advanced_lasers = {
+	cost = 3000
+	area = physics
+	tier = 1
+	category = field_manipulation
+	weight = 75
+	prerequisites = tech_lasers
+}
+
+tech_plasma = {
+	cost = 6000
+	area = physics
+	tier = 2
+	category = field_manipulation
+	weight = 30
+	is_rare = yes
+	prerequisites = tech_advanced_lasers
+
+	weight_modifier = {
+		factor = 2.0
+		modifier = {
+			factor = 1.5
+			has_ethic = ethic_militarist
+		}
+	}
+}
+
+tech_shields = {
+	cost = 1000
+	area = physics
+	tier = 0
+	category = particles
+	weight = 100
+}

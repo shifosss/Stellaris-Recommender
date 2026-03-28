@@ -1,0 +1,46 @@
+# Engineering technologies — synthetic fixture
+
+tech_basic_alloys = {
+	cost = 0
+	area = engineering
+	tier = 0
+	category = industry
+	weight = 100
+	start_tech = yes
+}
+
+tech_alloys = {
+	cost = 2000
+	area = engineering
+	tier = 1
+	category = industry
+	weight = 90
+	prerequisites = tech_basic_alloys
+}
+
+tech_corvettes = {
+	cost = 0
+	area = engineering
+	tier = 0
+	category = voidcraft
+	weight = 100
+	start_tech = yes
+}
+
+tech_destroyers = {
+	cost = 3000
+	area = engineering
+	tier = 1
+	category = voidcraft
+	weight = 80
+	prerequisites = tech_corvettes
+}
+
+tech_cruisers = {
+	cost = 8000
+	area = engineering
+	tier = 2
+	category = voidcraft
+	weight = 60
+	prerequisites = tech_destroyers
+}

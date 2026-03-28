@@ -1,0 +1,65 @@
+# Edicts — synthetic fixture for testing
+
+edict_industrial_development = {
+	name = edict_industrial_development
+	length = 3600
+	edict_type = country
+
+	potential = { always = yes }
+
+	allow = {
+		always = yes
+	}
+
+	cost = {
+		energy = 500
+	}
+
+	modifier = {
+		planet_jobs_minerals_produces_mult = 0.10
+	}
+
+	ai_weight = { weight = 1 }
+}
+
+edict_nutritional_plentitude = {
+	name = edict_nutritional_plentitude
+	length = 3600
+	edict_type = country
+
+	potential = { always = yes }
+
+	allow = {
+		always = yes
+	}
+
+	cost = {
+		food = 500
+	}
+
+	modifier = {
+		pop_growth_speed = 0.15
+	}
+
+	ai_weight = { weight = 1 }
+}
+
+edict_capacity_subsidies = {
+	name = edict_capacity_subsidies
+	length = -1
+	edict_type = country
+
+	potential = { always = yes }
+
+	allow = { always = yes }
+
+	upkeep = {
+		energy = 5
+	}
+
+	modifier = {
+		country_edict_cap_add = 1
+	}
+
+	ai_weight = { weight = 1 }
+}

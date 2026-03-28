@@ -1,0 +1,105 @@
+# Megastructures — synthetic fixture for testing
+
+megastructure_dyson_sphere = {
+	name = megastructure_dyson_sphere
+	entity = dyson_sphere_entity
+	construction_entity = dyson_sphere_construction_entity
+	portrait = GFX_megastructure_dyson_sphere
+	show_galactic_map_icon = yes
+	show_in_outliner = yes
+	potential = {
+		has_ascension_perk = ap_galactic_wonders
+	}
+	prerequisites = { "tech_mega_engineering" }
+	required_perks = { ap_galactic_wonders }
+
+	build_outside_gravity_well = no
+
+	# Stage 0: Construction site
+	0 = {
+		name = megastructure_dyson_sphere_0
+		construction_days = 1800
+		resources = {
+			category = megastructures
+			cost = {
+				alloys = 2000
+				unity = 500
+			}
+		}
+	}
+
+	# Stage 1: First ring
+	1 = {
+		name = megastructure_dyson_sphere_1
+		construction_days = 3600
+		resources = {
+			category = megastructures
+			cost = {
+				alloys = 10000
+			}
+		}
+		planet_modifier = {
+			planet_jobs_energy_produces_mult = 0.50
+		}
+	}
+
+	# Stage 2: Final sphere
+	2 = {
+		name = megastructure_dyson_sphere_2
+		construction_days = 3600
+		resources = {
+			category = megastructures
+			cost = {
+				alloys = 20000
+			}
+		}
+		planet_modifier = {
+			planet_jobs_energy_produces_mult = 1.00
+		}
+	}
+}
+
+megastructure_ring_world = {
+	name = megastructure_ring_world
+	entity = ring_world_entity
+	construction_entity = ring_world_construction_entity
+	portrait = GFX_megastructure_ring_world
+	show_galactic_map_icon = yes
+	show_in_outliner = yes
+	potential = {
+		has_ascension_perk = ap_galactic_wonders
+	}
+	prerequisites = { "tech_mega_engineering" }
+	required_perks = { ap_galactic_wonders }
+
+	build_outside_gravity_well = no
+
+	# Stage 0: Construction site
+	0 = {
+		name = megastructure_ring_world_0
+		construction_days = 1800
+		resources = {
+			category = megastructures
+			cost = {
+				alloys = 2000
+				unity = 500
+			}
+		}
+	}
+
+	# Stage 1: First section
+	1 = {
+		name = megastructure_ring_world_1
+		construction_days = 7200
+		resources = {
+			category = megastructures
+			cost = {
+				alloys = 30000
+			}
+		}
+		planet_modifier = {
+			planet_max_districts_add = 10
+			planet_housing_add = 20
+		}
+	}
+}

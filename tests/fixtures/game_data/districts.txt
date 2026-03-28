@@ -1,0 +1,59 @@
+# Districts — synthetic fixture
+
+district_city = {
+	base_buildtime = 240
+	is_capped_by_modifier = no
+	cost = { minerals = 300 }
+	upkeep = { energy = 5 }
+	planet_modifier = {
+		planet_housing_add = 5
+		job_clerk_add = 2
+	}
+}
+
+district_mining = {
+	base_buildtime = 240
+	is_capped_by_modifier = no
+	cost = { minerals = 300 }
+	upkeep = { energy = 2 }
+	planet_modifier = { job_miner_add = 2 }
+	potential = {
+		NOT = { planet_class = pc_habitat }
+	}
+}
+
+district_farming = {
+	base_buildtime = 240
+	is_capped_by_modifier = no
+	cost = { minerals = 300 }
+	upkeep = { energy = 2 }
+	planet_modifier = { job_farmer_add = 2 }
+	potential = {
+		NOT = { planet_class = pc_tomb }
+		NOT = { planet_class = pc_habitat }
+	}
+}
+
+district_generator = {
+	base_buildtime = 240
+	is_capped_by_modifier = no
+	cost = { minerals = 300 }
+	upkeep = { energy = 1 }
+	planet_modifier = { job_technician_add = 2 }
+}
+
+district_industrial = {
+	base_buildtime = 360
+	is_capped_by_modifier = no
+	prerequisites = tech_alloys
+	cost = { minerals = 500 }
+	upkeep = { energy = 5 }
+	planet_modifier = {
+		job_foundry_worker_add = 1
+		job_artisan_add = 1
+	}
+	potential = {
+		NOT = { planet_class = pc_tomb }
+		NOT = { planet_class = pc_habitat }
+	}
+}

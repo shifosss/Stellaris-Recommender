@@ -1,0 +1,144 @@
+# Pop faction types — synthetic fixture for testing
+
+faction_egalitarian = {
+	name = egalitarian
+	election_header = GFX_faction_header_egalitarian
+	guiding_ethic = ethic_egalitarian
+	use_guiding_ethic_as_faction_ethic = yes
+	unique = no
+
+	can_join_faction = {
+		is_enslaved = no
+		is_being_purged = no
+	}
+
+	attraction = {
+		base = 1
+		modifier = {
+			factor = 10
+			has_ethic = ethic_egalitarian
+		}
+		modifier = {
+			factor = 10
+			has_ethic = ethic_fanatic_egalitarian
+		}
+	}
+
+	issues = {
+		political_issue = {
+			option = migration_controls_allowed
+			title = political_issue_egalitarian_migration
+			effect = { faction_approval = 10 }
+		}
+		political_issue = {
+			option = slavery_banned
+			title = political_issue_egalitarian_slavery
+			effect = { faction_approval = 10 }
+		}
+	}
+
+	demand = {
+		name = egalitarian_demand_democracy
+		unfulfilled_effect = -5
+		fulfilled_effect = 10
+		trigger = {
+			exists = owner
+			owner = {
+				OR = {
+					has_authority = auth_democratic
+					has_authority = auth_direct_democratic
+				}
+			}
+		}
+	}
+}
+
+faction_militarist = {
+	name = militarist
+	election_header = GFX_faction_header_militarist
+	guiding_ethic = ethic_militarist
+	use_guiding_ethic_as_faction_ethic = yes
+	unique = no
+
+	can_join_faction = {
+		is_enslaved = no
+		is_being_purged = no
+	}
+
+	attraction = {
+		base = 1
+		modifier = {
+			factor = 10
+			has_ethic = ethic_militarist
+		}
+		modifier = {
+			factor = 10
+			has_ethic = ethic_fanatic_militarist
+		}
+	}
+
+	issues = {
+		political_issue = {
+			option = interference_interference
+			title = political_issue_militarist_interference
+			effect = { faction_approval = 10 }
+		}
+	}
+
+	demand = {
+		name = militarist_demand_fleet
+		unfulfilled_effect = -10
+		fulfilled_effect = 5
+		trigger = {
+			exists = owner
+			owner = {
+				has_ethic = ethic_militarist
+			}
+		}
+	}
+}
+
+faction_xenophile = {
+	name = xenophile
+	election_header = GFX_faction_header_xenophile
+	guiding_ethic = ethic_xenophile
+	use_guiding_ethic_as_faction_ethic = yes
+	unique = no
+
+	can_join_faction = {
+		is_enslaved = no
+		is_being_purged = no
+	}
+
+	attraction = {
+		base = 1
+		modifier = {
+			factor = 10
+			has_ethic = ethic_xenophile
+		}
+		modifier = {
+			factor = 10
+			has_ethic = ethic_fanatic_xenophile
+		}
+	}
+
+	issues = {
+		political_issue = {
+			option = migration_controls_allowed
+			title = political_issue_xenophile_migration
+			effect = { faction_approval = 10 }
+		}
+	}
+
+	demand = {
+		name = xenophile_demand_open_borders
+		unfulfilled_effect = -5
+		fulfilled_effect = 10
+		trigger = {
+			exists = owner
+			owner = {
+				has_policy_flag = migration_controls_allowed
+			}
+		}
+	}
+}

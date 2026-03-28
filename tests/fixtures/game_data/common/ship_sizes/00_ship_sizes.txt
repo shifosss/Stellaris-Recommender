@@ -1,0 +1,97 @@
+# Ship sizes — synthetic fixture for testing
+
+corvette = {
+	name = corvette
+	ship_class = military
+	formation_priority = 30
+	max_speed = 1.20
+	acceleration = 0.35
+	rotation_speed = 0.10
+	collision_radius = 0.8
+	max_hitpoints = 200
+	modifier = {
+		evasion_mult = 0.60
+	}
+	size_restriction = { corvette }
+
+	cost = {
+		alloys = 40
+	}
+	upkeep = {
+		energy = 1
+		alloys = 0.5
+	}
+
+	prerequisites = { "tech_corvettes" }
+
+	combat_disengage_chance = 0.50
+	naval_coverage = 1
+	class_name = corvette
+	icon = corvette_icon
+	icon_frame = 2
+	base_buildtime = 60
+}
+
+destroyer = {
+	name = destroyer
+	ship_class = military
+	formation_priority = 25
+	max_speed = 1.00
+	acceleration = 0.25
+	rotation_speed = 0.08
+	collision_radius = 1.2
+	max_hitpoints = 500
+	modifier = {
+		evasion_mult = 0.30
+	}
+	size_restriction = { destroyer }
+
+	cost = {
+		alloys = 80
+	}
+	upkeep = {
+		energy = 2
+		alloys = 1.0
+	}
+
+	prerequisites = { "tech_destroyers" }
+
+	combat_disengage_chance = 0.30
+	naval_coverage = 2
+	class_name = destroyer
+	icon = destroyer_icon
+	icon_frame = 3
+	base_buildtime = 120
+}
+
+cruiser = {
+	name = cruiser
+	ship_class = military
+	formation_priority = 20
+	max_speed = 0.85
+	acceleration = 0.20
+	rotation_speed = 0.06
+	collision_radius = 1.8
+	max_hitpoints = 1100
+	modifier = {
+		evasion_mult = 0.10
+	}
+	size_restriction = { cruiser }
+
+	cost = {
+		alloys = 200
+	}
+	upkeep = {
+		energy = 4
+		alloys = 2.0
+	}
+
+	prerequisites = { "tech_cruisers" }
+
+	combat_disengage_chance = 0.15
+	naval_coverage = 4
+	class_name = cruiser
+	icon = cruiser_icon
+	icon_frame = 4
+	base_buildtime = 240
+}

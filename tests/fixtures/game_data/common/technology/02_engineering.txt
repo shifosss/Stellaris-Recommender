@@ -1,0 +1,103 @@
+# Engineering technologies — synthetic fixture for testing
+
+tech_corvettes = {
+	cost = 0
+	area = engineering
+	tier = 0
+	category = { voidcraft }
+	prerequisites = { }
+	weight = 100
+	start_tech = yes
+
+	ai_weight = {
+		factor = 1.0
+	}
+}
+
+tech_destroyers = {
+	cost = 3000
+	area = engineering
+	tier = 2
+	category = { voidcraft }
+	prerequisites = { "tech_corvettes" }
+	weight = 75
+
+	ai_weight = {
+		factor = 1.0
+	}
+}
+
+tech_cruisers = {
+	cost = 6000
+	area = engineering
+	tier = 3
+	category = { voidcraft }
+	prerequisites = { "tech_destroyers" }
+	weight = 45
+	is_rare = yes
+
+	ai_weight = {
+		factor = 0.75
+	}
+}
+
+tech_mining_network_1 = {
+	cost = 1000
+	area = engineering
+	tier = 1
+	category = { industry }
+	prerequisites = { }
+	weight = 100
+
+	ai_weight = {
+		factor = 1.0
+	}
+}
+
+tech_power_hub_1 = {
+	cost = 1000
+	area = engineering
+	tier = 1
+	category = { power }
+	prerequisites = { }
+	weight = 100
+
+	ai_weight = {
+		factor = 1.0
+	}
+}
+
+tech_power_hub_2 = {
+	cost = 3000
+	area = engineering
+	tier = 2
+	category = { power }
+	prerequisites = { "tech_power_hub_1" }
+	weight = 75
+
+	ai_weight = {
+		factor = 1.0
+	}
+}
+
+tech_mega_engineering = {
+	cost = 20000
+	area = engineering
+	tier = 4
+	category = { voidcraft }
+	prerequisites = { "tech_cruisers" }
+	weight = 20
+	is_rare = yes
+
+	weight_modifier = {
+		factor = 0.5
+		modifier = {
+			factor = 0.0
+			NOT = { has_ascension_perk = ap_galactic_wonders }
+		}
+	}
+
+	ai_weight = {
+		factor = 0.25
+	}
+}

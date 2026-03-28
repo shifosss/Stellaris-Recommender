@@ -1,0 +1,67 @@
+# Species traits — synthetic fixture for testing
+
+trait_intelligent = {
+	cost = 2
+	initial = yes
+	randomized = yes
+	modification = yes
+	category = normal
+	opposites = { "trait_simple_minded" }
+	modifier = {
+		research_speed_factor = 0.10
+		leader_experience_gain = 0.25
+	}
+	ai_weight = {
+		weight = 5
+	}
+}
+
+trait_natural_physicists = {
+	cost = 1
+	initial = yes
+	randomized = yes
+	modification = yes
+	category = normal
+	modifier = {
+		physics_research_speed_factor = 0.15
+	}
+	ai_weight = {
+		weight = 4
+		modifier = {
+			factor = 1.5
+			has_trait = trait_intelligent
+		}
+	}
+}
+
+trait_sedentary = {
+	cost = -1
+	initial = yes
+	randomized = yes
+	modification = yes
+	category = normal
+	opposites = { "trait_nomadic" }
+	modifier = {
+		resettlement_cost_mult = 0.50
+		migration_speed_mult = -0.10
+	}
+	ai_weight = {
+		weight = 3
+	}
+}
+
+trait_nomadic = {
+	cost = 1
+	initial = yes
+	randomized = yes
+	modification = yes
+	category = normal
+	opposites = { "trait_sedentary" }
+	modifier = {
+		resettlement_cost_mult = -0.25
+		migration_speed_mult = 0.25
+	}
+	ai_weight = {
+		weight = 3
+	}
+}

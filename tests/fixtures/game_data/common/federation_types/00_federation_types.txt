@@ -1,0 +1,76 @@
+# Federation types — synthetic fixture for testing
+
+default_federation = {
+	name = federation_default
+	free_migration = no
+	has_president = yes
+	has_constitution = yes
+
+	# Perks unlocked by federation level
+	perk = {
+		name = fp_free_migration
+		level = 3
+		modifier = {
+			pop_growth_speed = 0.05
+		}
+	}
+
+	perk = {
+		name = fp_increase_cohesion_speed
+		level = 5
+		modifier = {
+			federation_cohesion_mult = 0.25
+		}
+	}
+
+	max_fed_size = 999
+	max_level = 10
+	challenge_threshold = 0.50
+
+	cohesion_per_month = {
+		base = 1.0
+	}
+
+	vote_weight = {
+		base = 1
+	}
+
+	ai_weight = { weight = 1 }
+}
+
+research_cooperative = {
+	name = federation_research_coop
+	free_migration = no
+	has_president = no
+	has_constitution = no
+
+	perk = {
+		name = fp_cooperative_research
+		level = 1
+		modifier = {
+			all_technology_research_speed = 0.10
+		}
+	}
+
+	perk = {
+		name = fp_joint_fleet
+		level = 5
+		modifier = {
+			ship_fire_rate_mult = 0.10
+		}
+	}
+
+	max_fed_size = 999
+	max_level = 5
+	challenge_threshold = 0.40
+
+	cohesion_per_month = {
+		base = 0.5
+	}
+
+	vote_weight = {
+		base = 1
+	}
+
+	ai_weight = { weight = 1 }
+}

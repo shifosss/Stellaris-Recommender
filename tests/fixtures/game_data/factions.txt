@@ -1,0 +1,129 @@
+# Pop faction types — synthetic fixture
+
+faction_militarist = {
+	name = militarist
+	guiding_ethic = ethic_militarist
+	use_guiding_ethic_as_faction_ethic = yes
+
+	can_join_faction = {
+		is_enslaved = no
+		is_being_purged = no
+	}
+
+	attraction = {
+		base = 1
+		modifier = {
+			factor = 10
+			has_ethic = ethic_militarist
+		}
+		modifier = {
+			factor = 20
+			has_ethic = ethic_fanatic_militarist
+		}
+	}
+
+	issues = {
+		political_issue = {
+			option = policy_military_professional_army
+			title = political_issue_militarist_army
+			effect = { faction_approval = 10 }
+		}
+		political_issue = {
+			option = policy_diplomatic_closed_borders
+			title = political_issue_militarist_borders
+			effect = { faction_approval = 5 }
+		}
+	}
+
+	demand = {
+		name = militarist_demand_strong_military
+		unfulfilled_effect = -10
+		fulfilled_effect = 5
+		trigger = {
+			exists = owner
+			owner = { has_tradition = tr_expansion_finish }
+		}
+	}
+}
+
+faction_materialist = {
+	name = materialist
+	guiding_ethic = ethic_materialist
+	use_guiding_ethic_as_faction_ethic = yes
+
+	can_join_faction = {
+		is_enslaved = no
+		is_being_purged = no
+	}
+
+	attraction = {
+		base = 1
+		modifier = {
+			factor = 10
+			has_ethic = ethic_materialist
+		}
+		modifier = {
+			factor = 20
+			has_ethic = ethic_fanatic_materialist
+		}
+	}
+
+	issues = {
+		political_issue = {
+			option = policy_economic_free_market
+			title = political_issue_materialist_economy
+			effect = { faction_approval = 10 }
+		}
+	}
+
+	demand = {
+		name = materialist_demand_research
+		unfulfilled_effect = -5
+		fulfilled_effect = 10
+		trigger = {
+			exists = owner
+			owner = { has_technology = tech_lasers }
+		}
+	}
+}
+
+faction_spiritualist = {
+	name = spiritualist
+	guiding_ethic = ethic_spiritualist
+	use_guiding_ethic_as_faction_ethic = yes
+
+	can_join_faction = {
+		is_enslaved = no
+		is_being_purged = no
+	}
+
+	attraction = {
+		base = 1
+		modifier = {
+			factor = 10
+			has_ethic = ethic_spiritualist
+		}
+		modifier = {
+			factor = 20
+			has_ethic = ethic_fanatic_spiritualist
+		}
+	}
+
+	issues = {
+		political_issue = {
+			option = policy_economic_interventionism
+			title = political_issue_spiritualist_economy
+			effect = { faction_approval = 5 }
+		}
+	}
+
+	demand = {
+		name = spiritualist_demand_temples
+		unfulfilled_effect = -10
+		fulfilled_effect = 10
+		trigger = {
+			exists = owner
+			owner = { has_ethic = ethic_spiritualist }
+		}
+	}
+}

@@ -1,0 +1,49 @@
+# Society technologies — synthetic fixture for testing
+
+tech_colonial_centralization = {
+	cost = 1000
+	area = society
+	tier = 1
+	category = { statecraft }
+	prerequisites = { }
+	weight = 100
+
+	ai_weight = {
+		factor = 1.0
+	}
+}
+
+tech_neural_implants = {
+	cost = 6000
+	area = society
+	tier = 3
+	category = { biology }
+	prerequisites = { "tech_colonial_centralization" }
+	weight = 40
+	is_dangerous = yes
+
+	weight_modifier = {
+		factor = 2.0
+		modifier = {
+			factor = 0.0
+			has_ethic = ethic_fanatic_spiritualist
+		}
+	}
+
+	ai_weight = {
+		factor = 0.5
+	}
+}
+
+tech_genome_mapping = {
+	cost = 1000
+	area = society
+	tier = 1
+	category = { biology }
+	prerequisites = { }
+	weight = 100
+
+	ai_weight = {
+		factor = 1.0
+	}
+}

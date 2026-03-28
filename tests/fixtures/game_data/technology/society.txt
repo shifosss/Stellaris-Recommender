@@ -1,0 +1,54 @@
+# Society technologies — synthetic fixture
+
+tech_colonization = {
+	cost = 0
+	area = society
+	tier = 0
+	category = statecraft
+	weight = 100
+	start_tech = yes
+}
+
+tech_advanced_colonization = {
+	cost = 2000
+	area = society
+	tier = 1
+	category = statecraft
+	weight = 80
+	prerequisites = tech_colonization
+}
+
+tech_alien_life_studies = {
+	cost = 1000
+	area = society
+	tier = 0
+	category = biology
+	weight = 100
+}
+
+tech_genome_mapping = {
+	cost = 3000
+	area = society
+	tier = 1
+	category = biology
+	weight = 75
+	prerequisites = tech_alien_life_studies
+}
+
+tech_neural_implants = {
+	cost = 6000
+	area = society
+	tier = 2
+	category = biology
+	weight = 40
+	is_dangerous = yes
+	prerequisites = tech_genome_mapping
+
+	weight_modifier = {
+		factor = 0.0
+		modifier = {
+			factor = 1.0
+			has_ethic = ethic_fanatic_spiritualist
+		}
+	}
+}

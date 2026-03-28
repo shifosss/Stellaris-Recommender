@@ -1,0 +1,34 @@
+# Council positions — synthetic fixture for testing
+
+council_position_scientist = {
+	name = council_position_scientist
+	leader_class = scientist
+	portrait = GFX_leader_scientist
+	modifier = {
+		all_technology_research_speed = 0.05
+	}
+	max_council_positions = 1
+	ai_weight = { weight = 1 }
+}
+
+council_position_admiral = {
+	name = council_position_admiral
+	leader_class = admiral
+	portrait = GFX_leader_admiral
+	modifier = {
+		ship_fire_rate_mult = 0.05
+	}
+	max_council_positions = 1
+	ai_weight = { weight = 1 }
+}
+
+council_position_diplomat = {
+	name = council_position_diplomat
+	leader_class = official
+	portrait = GFX_leader_official
+	modifier = {
+		country_border_friction_mult = -0.10
+	}
+	max_council_positions = 1
+	ai_weight = { weight = 1 }
+}

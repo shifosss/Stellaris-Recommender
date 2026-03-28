@@ -1,0 +1,109 @@
+# Megastructures — synthetic fixture
+
+megastructure_dyson_sphere = {
+	name = megastructure_dyson_sphere
+	prerequisites = tech_cruisers
+	required_perks = { ap_one_vision }
+	build_outside_gravity_well = no
+
+	# Stage 0: Construction site
+	0 = {
+		name = megastructure_dyson_sphere_0
+		construction_days = 1800
+		resources = {
+			category = megastructures
+			cost = { alloys = 2000 }
+		}
+	}
+
+	# Stage 1: First ring
+	1 = {
+		name = megastructure_dyson_sphere_1
+		construction_days = 3600
+		resources = {
+			category = megastructures
+			cost = { alloys = 10000 }
+		}
+		planet_modifier = { planet_jobs_energy_produces_mult = 0.50 }
+	}
+
+	# Stage 2: Complete sphere
+	2 = {
+		name = megastructure_dyson_sphere_2
+		construction_days = 3600
+		resources = {
+			category = megastructures
+			cost = { alloys = 20000 }
+		}
+		planet_modifier = { planet_jobs_energy_produces_mult = 1.00 }
+	}
+}
+
+megastructure_science_nexus = {
+	name = megastructure_science_nexus
+	prerequisites = tech_neural_implants
+	required_perks = { ap_technological_mastery }
+	build_outside_gravity_well = no
+
+	# Stage 0: Construction site
+	0 = {
+		name = megastructure_science_nexus_0
+		construction_days = 1800
+		resources = {
+			category = megastructures
+			cost = { alloys = 2000 }
+		}
+	}
+
+	# Stage 1: Operational
+	1 = {
+		name = megastructure_science_nexus_1
+		construction_days = 3600
+		resources = {
+			category = megastructures
+			cost = { alloys = 15000 }
+		}
+		planet_modifier = { all_technology_research_speed = 0.30 }
+	}
+}
+
+megastructure_ring_world = {
+	name = megastructure_ring_world
+	prerequisites = tech_cruisers
+	required_perks = { ap_mastery_of_nature }
+	build_outside_gravity_well = no
+
+	# Stage 0: Construction site
+	0 = {
+		name = megastructure_ring_world_0
+		construction_days = 1800
+		resources = {
+			category = megastructures
+			cost = { alloys = 2000 }
+		}
+	}
+
+	# Stage 1: First arc
+	1 = {
+		name = megastructure_ring_world_1
+		construction_days = 7200
+		resources = {
+			category = megastructures
+			cost = { alloys = 30000 }
+		}
+		planet_modifier = {
+			planet_max_districts_add = 10
+			planet_housing_add = 20
+		}
+	}
+
+	# Stage 2: Complete ring (cracked)
+	2 = {
+		name = megastructure_ring_world_cracked
+		construction_days = 0
+		resources = {
+			category = megastructures
+			cost = { alloys = 0 }
+		}
+	}
+}

@@ -1,0 +1,103 @@
+# Traditions — synthetic fixture
+# Each tree entry lists its member traditions; individual traditions follow.
+
+# ---- Tree definitions ----
+
+tr_discovery = {
+	name = discovery
+	traditions = {
+		tr_discovery_exploration
+		tr_discovery_scientific_method
+		tr_discovery_eureka
+		tr_discovery_finish
+	}
+	adopt_effect = "All research speed increased"
+	finish_effect = "Research speed further increased and anomaly chance increased"
+}
+
+tr_expansion = {
+	name = expansion
+	traditions = {
+		tr_expansion_frugal_expansion
+		tr_expansion_world_shaper
+		tr_expansion_initiative
+		tr_expansion_finish
+	}
+	adopt_effect = "Colonization speed increased"
+	finish_effect = "Pop growth speed increased"
+}
+
+# ---- Discovery traditions ----
+
+tr_discovery_adopt = {
+	tree = tr_discovery
+	modifier = { all_technology_research_speed = 0.10 }
+}
+
+tr_discovery_exploration = {
+	tree = tr_discovery
+	cost = 100
+	modifier = { ship_sensor_range_add = 1 }
+	prerequisites = { }
+	ai_weight = { weight = 1 }
+}
+
+tr_discovery_scientific_method = {
+	tree = tr_discovery
+	cost = 100
+	modifier = { science_ship_survey_speed = 0.25 }
+	prerequisites = { tr_discovery_exploration }
+	ai_weight = { weight = 1 }
+}
+
+tr_discovery_eureka = {
+	tree = tr_discovery
+	cost = 100
+	modifier = { all_technology_research_speed = 0.05 }
+	prerequisites = { tr_discovery_scientific_method }
+	ai_weight = { weight = 1 }
+}
+
+tr_discovery_finish = {
+	tree = tr_discovery
+	modifier = {
+		all_technology_research_speed = 0.10
+		chance_of_anomaly = 0.10
+	}
+}
+
+# ---- Expansion traditions ----
+
+tr_expansion_adopt = {
+	tree = tr_expansion
+	modifier = { colonization_speed_mult = 0.25 }
+}
+
+tr_expansion_frugal_expansion = {
+	tree = tr_expansion
+	cost = 100
+	modifier = { planet_colony_development_speed_mult = 0.15 }
+	prerequisites = { }
+	ai_weight = { weight = 1 }
+}
+
+tr_expansion_world_shaper = {
+	tree = tr_expansion
+	cost = 100
+	modifier = { terraforming_cost_mult = -0.25 }
+	prerequisites = { tr_expansion_frugal_expansion }
+	ai_weight = { weight = 1 }
+}
+
+tr_expansion_initiative = {
+	tree = tr_expansion
+	cost = 100
+	modifier = { starbase_influence_cost_mult = -0.25 }
+	prerequisites = { tr_expansion_world_shaper }
+	ai_weight = { weight = 1 }
+}
+
+tr_expansion_finish = {
+	tree = tr_expansion
+	modifier = { pop_growth_speed = 0.15 }
+}

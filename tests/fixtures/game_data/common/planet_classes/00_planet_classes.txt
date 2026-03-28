@@ -1,0 +1,56 @@
+# Planet classes — synthetic fixture for testing
+
+pc_continental = {
+	climate = wet
+	icon = GFX_planet_type_continental
+	tile_set = pc_continental
+	habitability = 1.00
+	district_cap = 20
+	colonizable = yes
+	starting_planet = yes
+	modifier = {
+		planet_max_districts_add = 0
+	}
+	district_set = standard
+}
+
+pc_arid = {
+	climate = dry
+	icon = GFX_planet_type_arid
+	tile_set = pc_arid
+	habitability = 0.60
+	district_cap = 18
+	colonizable = yes
+	modifier = {
+		planet_max_districts_add = -2
+		pop_growth_speed = -0.05
+	}
+	district_set = standard
+}
+
+pc_ocean = {
+	climate = wet
+	icon = GFX_planet_type_ocean
+	tile_set = pc_ocean
+	habitability = 1.00
+	district_cap = 20
+	colonizable = yes
+	modifier = {
+		planet_max_districts_add = 0
+	}
+	district_set = standard
+}
+
+pc_tundra = {
+	climate = cold
+	icon = GFX_planet_type_tundra
+	tile_set = pc_tundra
+	habitability = 0.70
+	district_cap = 16
+	colonizable = yes
+	modifier = {
+		planet_max_districts_add = -4
+		pop_growth_speed = -0.10
+	}
+	district_set = standard
+}

@@ -1,0 +1,87 @@
+# Civics — synthetic fixture for testing
+
+civic_agrarian_idyll = {
+	name = civic_agrarian_idyll
+	description = civic_agrarian_idyll_desc
+
+	playable = { always = yes }
+
+	potential = {
+		authority = {
+			OR = {
+				value = auth_democratic
+				value = auth_oligarchic
+			}
+		}
+		ethics = {
+			NOT = { value = ethic_gestalt_consciousness }
+		}
+	}
+
+	modifier = {
+		planet_farmers_food_produces_mult = 0.10
+		planet_farmers_upkeep_mult = -0.10
+	}
+
+	ai_weight = {
+		weight = 1
+		modifier = {
+			factor = 2.0
+			has_tradition = tr_expansion_finish
+		}
+	}
+}
+
+civic_beacon_of_liberty = {
+	name = civic_beacon_of_liberty
+	description = civic_beacon_of_liberty_desc
+
+	playable = { always = yes }
+
+	potential = {
+		authority = {
+			value = auth_democratic
+		}
+		ethics = {
+			NOT = { value = ethic_gestalt_consciousness }
+		}
+	}
+
+	modifier = {
+		pop_government_ethic_attraction = 0.25
+		country_unity_produces_mult = 0.10
+	}
+
+	ai_weight = {
+		weight = 1
+	}
+}
+
+civic_distinguished_admiralty = {
+	name = civic_distinguished_admiralty
+	description = civic_distinguished_admiralty_desc
+
+	playable = { always = yes }
+
+	potential = {
+		ethics = {
+			OR = {
+				value = ethic_militarist
+				value = ethic_fanatic_militarist
+			}
+		}
+	}
+
+	modifier = {
+		ship_fire_rate_mult = 0.05
+		naval_cap_from_planets_mult = 0.10
+	}
+
+	ai_weight = {
+		weight = 1
+		modifier = {
+			factor = 2.0
+			has_ethic = ethic_fanatic_militarist
+		}
+	}
+}

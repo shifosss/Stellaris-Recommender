@@ -1,0 +1,64 @@
+# Tradition trees (categories) — synthetic fixture for testing
+
+tr_expansion = {
+	name = expansion
+	traditions = {
+		tr_expansion_adopt
+		tr_expansion_frugal_expansion
+		tr_expansion_world_shaper
+		tr_expansion_finish
+	}
+	adoption_bonus = tr_expansion_adopt
+	finish_bonus = tr_expansion_finish
+
+	possible = {
+		always = yes
+	}
+
+	ai_weight = {
+		weight = 1
+		modifier = {
+			factor = 2.0
+			is_ai = yes
+		}
+	}
+}
+
+tr_domination = {
+	name = domination
+	traditions = {
+		tr_domination_adopt
+		tr_domination_thought_police
+		tr_domination_finish
+	}
+	adoption_bonus = tr_domination_adopt
+	finish_bonus = tr_domination_finish
+
+	possible = {
+		always = yes
+	}
+
+	ai_weight = {
+		weight = 1
+	}
+}
+
+tr_prosperity = {
+	name = prosperity
+	traditions = {
+		tr_prosperity_adopt
+		tr_prosperity_marketplace_ideas
+		tr_prosperity_good_jobs
+		tr_prosperity_finish
+	}
+	adoption_bonus = tr_prosperity_adopt
+	finish_bonus = tr_prosperity_finish
+
+	possible = {
+		always = yes
+	}
+
+	ai_weight = {
+		weight = 1
+	}
+}
