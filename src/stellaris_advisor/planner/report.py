@@ -52,15 +52,18 @@ def analyze(
 
     # Step 3: Compute empire health + bottleneck
     empire_type = "standard"
-    if "hive_mind" in empire.civics:
+    if empire.authority == "auth_hive_mind":
         empire_type = "hive"
-    elif "machine_intelligence" in empire.authority:
+    elif empire.authority == "auth_machine_intelligence":
         empire_type = "machine"
+
+    # Hardcoded defaults are captain-only; use "captain" when no benchmark file
+    difficulty = galactic.difficulty if benchmark_path else "captain"
 
     health = compute_empire_health(
         empire_features,
         galactic.year,
-        galactic.difficulty,
+        difficulty,
         empire_type,
         benchmark,
     )
@@ -80,7 +83,8 @@ def analyze(
         if ColonizationScorer.is_available(colonization_model_path):
             colonization_scorer = ColonizationScorer.load(colonization_model_path)
 
-    mode = "full" if rl_predictor is not None else "degraded"
+    # RL scoring not yet wired into ranking pipeline — stay degraded
+    mode = "degraded"
 
     # Step 5: Generate candidate actions
     candidates = generate_all_actions(
