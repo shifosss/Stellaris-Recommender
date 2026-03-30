@@ -8,7 +8,7 @@ from stellaris_advisor.planner.models import BottleneckResult, EmpireHealth
 # Map benchmark metric names to empire feature keys
 _METRIC_TO_FEATURE: dict[str, str] = {
     "alloy_income": "resource_net_alloys",
-    "research_total": "tech_physics_research_speed",
+    "research_total": "_sum_research_speed",  # special: sum of 3 area speeds
     "fleet_power": "military_fleet_power",
     "tech_count": "tech_total_count",
     "system_count": "expansion_system_count",
@@ -29,6 +29,17 @@ _RESOLUTION_HINTS: dict[str, str] = {
 }
 
 
+def _get_metric_value(empire_features: dict[str, float], feature_key: str) -> float:
+    """Resolve a metric's feature value, handling the research_total sum."""
+    if feature_key == "_sum_research_speed":
+        return (
+            empire_features.get("tech_physics_research_speed", 0.0)
+            + empire_features.get("tech_society_research_speed", 0.0)
+            + empire_features.get("tech_engineering_research_speed", 0.0)
+        )
+    return empire_features.get(feature_key, 0.0)
+
+
 def detect_bottleneck(
     empire_features: dict[str, float],
     year: int,
@@ -46,7 +57,7 @@ def detect_bottleneck(
 
     for metric in BENCHMARK_METRICS:
         feature_key = _METRIC_TO_FEATURE[metric]
-        value = empire_features.get(feature_key, 0.0)
+        value = _get_metric_value(empire_features, feature_key)
         rank = benchmark.percentile_rank(year, difficulty, empire_type, metric, value)
         if rank < worst_rank:
             worst_rank = rank
@@ -79,7 +90,7 @@ def compute_empire_health(
 
     for metric in BENCHMARK_METRICS:
         feature_key = _METRIC_TO_FEATURE[metric]
-        value = empire_features.get(feature_key, 0.0)
+        value = _get_metric_value(empire_features, feature_key)
         rank = benchmark.percentile_rank(year, difficulty, empire_type, metric, value)
         dim_ranks.append((metric, rank))
 

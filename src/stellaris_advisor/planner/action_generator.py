@@ -111,7 +111,25 @@ def generate_expansion_actions(
             continue
 
         best_planet = max(habitable, key=lambda p: p.size)
-        score = best_planet.size / 25.0  # normalize by max planet size
+        if colonization_scorer is not None:
+            # Use ML scorer: feed system features (approximate from available data)
+            sys_features = [
+                1.0 if best_planet.is_habitable else 0.0,
+                float(best_planet.size),
+                0.0,
+                0.0,
+                0.0,
+                0.0,  # district slots (unavailable without game_graph)
+                sum(system.resources.values()),
+                float(len(system.hyperlane_connections)),
+                0.0,  # chokepoint (unavailable without precomputed graph)
+                0.0,  # distance to capital (unavailable)
+                0.0,  # distance to hostile (unavailable)
+                0.5,  # climate match (neutral default)
+            ]
+            score = colonization_scorer.predict(sys_features)
+        else:
+            score = best_planet.size / 25.0
 
         recs.append(
             Recommendation(
@@ -250,6 +268,7 @@ def generate_megastructure_actions(
     empire: EmpireState,
     galactic: GalacticState,
     game_graph: Any,
+    config: PlannerConfig | None = None,
 ) -> tuple[Recommendation, ...]:
     """Generate megastructure construction candidates."""
     recs: list[Recommendation] = []
@@ -261,7 +280,8 @@ def generate_megastructure_actions(
         alloy_income = empire.resource_income.get(
             "alloys", 0
         ) - empire.resource_expense.get("alloys", 0)
-        if alloy_income > 100:
+        threshold = config.megastructure_alloy_threshold if config else 200.0
+        if alloy_income > threshold:
             recs.append(
                 Recommendation(
                     rank=0,
@@ -366,7 +386,9 @@ def generate_all_actions(
     all_recs.extend(generate_military_actions(empire, galactic, config))
     all_recs.extend(generate_tradition_actions(empire, game_graph, galactic.year))
     all_recs.extend(generate_perk_actions(empire, game_graph, galactic.year))
-    all_recs.extend(generate_megastructure_actions(empire, galactic, game_graph))
+    all_recs.extend(
+        generate_megastructure_actions(empire, galactic, game_graph, config)
+    )
     all_recs.extend(generate_council_actions(empire, game_graph))
     all_recs.extend(generate_faction_actions(empire, game_graph))
     return tuple(all_recs)

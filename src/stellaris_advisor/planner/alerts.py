@@ -41,26 +41,25 @@ def generate_alerts(
                     )
                 )
 
-    # 2. Hostile neighbor threat
-    if empire.fleet_power > 0:
-        for other in galactic.empires:
-            if other.id != empire.id and other.id in set(empire.rivals):
-                ratio = other.fleet_power / max(empire.fleet_power, 1.0)
-                if ratio > config.threat_power_ratio:
-                    alerts.append(
-                        Alert(
-                            severity=AlertSeverity.HIGH,
-                            category="military",
-                            message=(
-                                f"Hostile neighbor {other.name}"
-                                f" has {ratio:.1f}x your fleet power"
-                            ),
-                            detail=(
-                                f"Their fleet: {other.fleet_power:.0f},"
-                                f" yours: {empire.fleet_power:.0f}"
-                            ),
-                        )
+    # 2. Hostile neighbor threat (fires even with zero fleet — that's the worst case)
+    for other in galactic.empires:
+        if other.id != empire.id and other.id in set(empire.rivals):
+            ratio = other.fleet_power / max(empire.fleet_power, 1.0)
+            if ratio > config.threat_power_ratio:
+                alerts.append(
+                    Alert(
+                        severity=AlertSeverity.HIGH,
+                        category="military",
+                        message=(
+                            f"Hostile neighbor {other.name}"
+                            f" has {ratio:.1f}x your fleet power"
+                        ),
+                        detail=(
+                            f"Their fleet: {other.fleet_power:.0f},"
+                            f" yours: {empire.fleet_power:.0f}"
+                        ),
                     )
+                )
 
     # 3. No ascension path chosen (warn 20 years before deadline)
     if (

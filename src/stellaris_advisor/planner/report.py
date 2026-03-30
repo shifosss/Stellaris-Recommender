@@ -57,8 +57,9 @@ def analyze(
     elif empire.authority == "auth_machine_intelligence":
         empire_type = "machine"
 
-    # Hardcoded defaults are captain-only; use "captain" when no benchmark file
-    difficulty = galactic.difficulty if benchmark_path else "captain"
+    # Hardcoded defaults are captain-only; use "captain" when using defaults
+    has_benchmark = benchmark_path is not None and benchmark_path.exists()
+    difficulty = galactic.difficulty if has_benchmark else "captain"
 
     health = compute_empire_health(
         empire_features,
