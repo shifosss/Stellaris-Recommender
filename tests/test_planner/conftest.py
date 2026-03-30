@@ -55,12 +55,9 @@ def planner_empire() -> EmpireState:
         level=4,
         traits=("trait_expertise_voidcraft",),
         expertise="voidcraft",
-        age=45,
         assignment="head_of_research",
     )
     faction = FactionState(
-        id=0,
-        name="Technologists",
         ethic="materialist",
         approval=65.0,
         support=0.3,

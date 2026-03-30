@@ -115,24 +115,50 @@ Plan 1 (scaffold+parser) → Plan 2 (gamedata) → Plan 3 (features) → Plan 4 
 
 ### 2. Subagent Routing Rules
 
-#### 2.1 Parallel dispatch (All conditions must be met)
+#### 2.1 Project Agents (`.claude/agents/`)
+
+General-purpose roles, personalized for this codebase:
+
+| Tier   | Agent              | Route when...                                                                          |
+| ------ | ------------------ | -------------------------------------------------------------------------------------- |
+| opus   | `architect`        | System design, cross-layer changes, pipeline architecture, 3+ file scope               |
+| opus   | `debugger`         | Subtle bugs — parser edge cases, RL divergence, data corruption, graph validation      |
+| opus   | `security-auditor` | File I/O, deserialization, save parsing, model loading, CLI input                      |
+| sonnet | `code-reviewer`    | **Proactively after code changes** — correctness, immutability, lazy imports, coverage |
+| sonnet | `implementer`      | Standard coding — new modules, features, refactoring, wiring                           |
+| sonnet | `test-writer`      | Test generation, coverage gaps, fixtures, Hypothesis                                   |
+| sonnet | `eval-designer`    | RL evaluation, metrics, benchmarks, cross-validation design                            |
+| haiku  | `explorer`         | Fast codebase search — find definitions, trace imports, answer "where is X?"           |
+| haiku  | `scaffolder`       | Boilerplate, directory structure, stub files for new modules                           |
+| haiku  | `dep-checker`      | Dependency audit, version conflicts,`[ml]` optional group validation                   |
+| haiku  | `log-parser`       | Training logs, ingestion output, pytest results, CI logs                               |
+| haiku  | `doc-writer`       | Documentation, docstrings, ADRs, changelogs                                            |
+
+Project-specific checklists (no model — inherit from parent):
+
+| Checklist               | Purpose                                                                                     |
+| ----------------------- | ------------------------------------------------------------------------------------------- |
+| `integration-validator` | Module boundary data flow, feature registry alignment, lazy import enforcement              |
+| `numerical-reviewer`    | Math correctness — reward normalization, feature scaling, CQL alpha, NDCG, division-by-zero |
+
+#### 2.2 Parallel dispatch (All conditions must be met)
 
 - 3+ unrelated tasks or independent domains
 - No shared state between tasks
 - Clear file boundaries with no overlap
 
-#### 2.2 Sequential dispatch (ANY condition triggers)
+#### 2.3 Sequential dispatch (ANY condition triggers)
 
 - Tasks have dependencies (B needs output from A)
 - Shared files or state (merge conflict risk)
 - Unclear scope (need to understand before proceeding)
 
-#### 2.3 Background dispatch
+#### 2.4 Background dispatch
 
 - Research or analysis tasks (not file modifications)
 - Results aren't blocking current work
 
-#### 2.4 Model Tier Policy
+#### 2.5 Model Tier Policy
 
 Select models for agents by your insights, and use this table as a recommendation.
 
@@ -146,9 +172,10 @@ Select models for agents by your insights, and use this table as a recommendatio
 
 When implementing features across domains, spawn parallel agents:
 
-- **Model/training agent** : Model definitions, training loops, loss functions, data pipelines
-- **Serving/infra agent** : FastAPI endpoints, Docker, deployment configs, CI/CD
-- **Evaluation agent** : Metrics, benchmarks, experiment tracking, visualization
+- **`implementer`** + **`test-writer`**: Implementation + test writing in parallel
+- **`architect`** + **`explorer`**: Design + codebase research in parallel
+- **`code-reviewer`** + **`security-auditor`**: Quality review + security audit in parallel
+- **`implementer`** + **`scaffolder`**: Feature work + boilerplate for new module in parallel
 
 Each agent owns their domain. No file overlap.
 
@@ -199,3 +226,7 @@ Each agent owns their domain. No file overlap.
 - **Simplicity First**: Make every change as simple as possible. Impact minimal code.
 - **No Laziness**: Find root causes. No temporary fixes, Senior developer standards.
 - **Minimat Impact**: Changes should only touch what's necessary. Avoid introducing bugs.
+
+## Codex Cooperation
+
+Use GPT-5.4 when dispatching job to codex using codex-cli mcp.
