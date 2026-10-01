@@ -2,21 +2,6 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Coding Agent Rules
-
-### First Principles
-
-Use first-principles thinking. Do not assume I have a clear idea of what I want or how to achieve it. Be cautious — start from the original requirements and the problem itself. If the motivation or goal is unclear, **stop and discuss with me before proceeding** .
-
-### Solution Constraints
-
-All proposed modifications or refactors must comply with the following:
-
-- **No shims or patches.** Do not propose compatibility layers or workaround fixes.
-- **No over-engineering.** Use the shortest path to implementation, provided it does not violate the first rule.
-- **No scope creep.** Do not introduce solutions beyond what was explicitly requested — including fallbacks or graceful degradation — as these can cause business logic drift.
-- **Correctness is mandatory.** The logic of every proposed solution must be verified end-to-end across the full call chain.
-
 ## Project Overview
 
 Stellaris AI Advisor — a Python library + CLI that parses Stellaris save files, builds a game knowledge graph, trains offline RL models (d3rlpy/CQL), and delivers quantitative strategy recommendations. Licensed under GNU AGPL v3.
@@ -101,21 +86,7 @@ Plan 1 (scaffold+parser) → Plan 2 (gamedata) → Plan 3 (features) → Plan 4 
 - Test markers: `@pytest.mark.unit` (no I/O), `@pytest.mark.integration` (real files), `@pytest.mark.slow` (RL training)
 - Hypothesis for property-based testing of parser
 
-## Workflow Orchestration
-
-### 0. Always address me AlexZ. do this at the start of any of your response.
-
-### 1. Plan Node Default
-
-- Enter plan mode for ANY non-trivial task (3+ steps or architectural decisions)
-- If something goes sideways, STOP and re-plan immediately - don't keep pushing
-- Use plan mode for verification steps, not just building
-- Write detailed specs upfront to reduce ambiguity
-- Ask the user if they want to use superpowers:brainstorming skill if they want to explore a large feature update (architecture change, pipeline workflow change)
-
-### 2. Subagent Routing Rules
-
-#### 2.1 Project Agents (`.claude/agents/`)
+## Project agents
 
 General-purpose roles, personalized for this codebase:
 
@@ -141,36 +112,7 @@ Project-specific checklists (no model — inherit from parent):
 | `integration-validator` | Module boundary data flow, feature registry alignment, lazy import enforcement              |
 | `numerical-reviewer`    | Math correctness — reward normalization, feature scaling, CQL alpha, NDCG, division-by-zero |
 
-#### 2.2 Parallel dispatch (All conditions must be met)
-
-- 3+ unrelated tasks or independent domains
-- No shared state between tasks
-- Clear file boundaries with no overlap
-
-#### 2.3 Sequential dispatch (ANY condition triggers)
-
-- Tasks have dependencies (B needs output from A)
-- Shared files or state (merge conflict risk)
-- Unclear scope (need to understand before proceeding)
-
-#### 2.4 Background dispatch
-
-- Research or analysis tasks (not file modifications)
-- Results aren't blocking current work
-
-#### 2.5 Model Tier Policy
-
-Select models for agents by your insights, and use this table as a recommendation.
-
-|   Tier   | Model        | Use when                                                                                                                                                      |
-| :------: | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|  Heavy   | `opus 4.6`   | Architecture design, multi-file refactors, novel algorithm implementation,<br />security/correctness audits, debugging subtle concurrency or numerical issues |
-| Standard | `sonnet 4.6` | Everyday coding, code review, test writing, config generation, standard debugging, API integration                                                            |
-|  Light   | `Haiku`      | Codebase search, doc generation, dependency checks, lint/format, log parsing, boilerplate scaffolding                                                         |
-
-### 3. Domain Parallel Patterns
-
-When implementing features across domains, spawn parallel agents:
+### Parallel pairings
 
 - **`implementer`** + **`test-writer`**: Implementation + test writing in parallel
 - **`architect`** + **`explorer`**: Design + codebase research in parallel
@@ -179,54 +121,6 @@ When implementing features across domains, spawn parallel agents:
 
 Each agent owns their domain. No file overlap.
 
-### 4. Self-Improvement Loop
-
-- After ANY correction from the user: update 'tasks/lessons.md" with the pattern
-- Write rules for yourself that prevent the same mistake
-- Ruthlessly iterate on these lessons until mistake rate drops
-- Review lessons at session start for relevant project
-
-### 5. Verification Before Done
-
-- Never mark a task complete without proving it works
-- Diff behavior between main and your changes when relevant
-- Ask yourself: "Would a staff engineer approve this?"
-- Run tests, check logs, demonstrate correctness
-
-### 6. Demand Elegance (Balanced)
-
-- For non-trivial changes: pause and ask "is there a more elegant way?"
-- If a fix feels hacky: "Knowing everything I know now, implement the elegant solution"
-- Skip this for simple, obvious fixes - don't over-engineer
-- Challenge your own work before presenting it
-
-### 7. Autonomous Bug Fizing
-
-- When given a bug report: just fix it. Don't ask for hand-holding
-- Point at logs, errors, failing tests - then resolve them
-- Zero context switching required from the user
-- Go fix failing CI tests without being told how
-
-### 8. Version Control
-
-- Always manage the repo using git
-- Log the progress after each stage/step/task is finished
-
-## Task Management
-
-1. **Plan First**: Write plan to "tasks/todo.md' with checkable items
-2. **Verify Plan**: Check in before starting implementation
-3. **Track Progress**: Mark items complete as you go
-4. **Explain Changes**: High-level summary at each step
-5. **Document Results**: Add review section to 'tasks/todo.md"
-6. **Capture Lessons**: Update "tasks/lessons.md' after corrections
-
-## Core Principles
-
-- **Simplicity First**: Make every change as simple as possible. Impact minimal code.
-- **No Laziness**: Find root causes. No temporary fixes, Senior developer standards.
-- **Minimat Impact**: Changes should only touch what's necessary. Avoid introducing bugs.
-
 ## Codex Cooperation
 
-Use GPT-5.4 when dispatching job to codex using codex-cli mcp.
+Use model `gpt-6.1-sol` when dispatching jobs to codex via the project `codex-cli` MCP (`mcp__codex-cli__*`).
