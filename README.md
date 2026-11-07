@@ -55,6 +55,7 @@ EOF
 Output:
 
 ```text
+Created .../tests/fixtures/sample_save_small.sav
 United Nations of Earth | 2250.01 | v4.3 | grand_admiral
 mode: degraded
 1 military build_ships - Build ships — 68 naval capacity available
@@ -93,17 +94,19 @@ A `.sav` file is a ZIP archive holding a metadata file and the `gamestate`. The 
 ## Testing
 
 ```bash
+pip install -e ".[dev]"
+pytest -m "not slow"
+```
+
+This gives 1,133 passed, 21 skipped and 9 deselected. Tests that need numpy, torch, pyarrow or LightGBM skip when the package is missing. To run them, install the ML extra and run `tests/test_rl` in its own process:
+
+```bash
 pip install -e ".[ml,dev]"
 pytest -m "not slow" --ignore=tests/test_rl
 pytest -m "not slow" tests/test_rl
 ```
 
-Run `tests/test_rl` in its own process. On macOS (arm64, Python 3.12), importing torch and then training a LightGBM model in the same process segfaults (exit 139), and the full suite hits that in `tests/test_colonization`. Not checked on Linux. Together the two commands select 1,224 non-slow tests: 1,223 pass and 1 fails. The `slow` marker (RL training, LightGBM training) is run separately: `pytest -m slow tests/test_rl` and `pytest -m slow tests/test_colonization`.
-
-Known issues:
-
-- `tests/test_rl/test_networks.py::TestValueNetwork::test_output_shape_single` fails: the value network uses BatchNorm and the test feeds a batch of 1 in training mode.
-- numpy is missing from the `dev` extra. `tests/test_rl/test_tuning.py` imports it at module level, so `pytest` fails to collect with `.[dev]` alone. Install `.[ml,dev]`, or add `--ignore=tests/test_rl/test_tuning.py` (1,133 passed, 20 skipped on that install).
+On macOS (arm64, Python 3.12), importing torch and then training a LightGBM model in the same process segfaults (exit 139), and a single `pytest -m "not slow"` hits that in `tests/test_colonization`. Not checked on Linux. The two commands above select 1,224 non-slow tests (1,173 and 51), and all pass. The `slow` marker (RL training, LightGBM training) is run separately: `pytest -m slow tests/test_rl` and `pytest -m slow tests/test_colonization`.
 
 ## License
 
