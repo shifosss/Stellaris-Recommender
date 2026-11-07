@@ -20,7 +20,7 @@ class TestValueNetwork:
     def test_output_shape_single(self) -> None:
         from stellaris_advisor.rl.networks import ValueNetwork
 
-        net = ValueNetwork(state_dim=STATE_DIM)
+        net = ValueNetwork(state_dim=STATE_DIM).eval()
         x = torch.randn(1, STATE_DIM)
         out = net(x)
         assert out.shape == (1, 1)

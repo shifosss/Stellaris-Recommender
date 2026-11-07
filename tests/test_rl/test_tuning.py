@@ -8,8 +8,9 @@ from pathlib import Path
 from types import ModuleType
 from unittest.mock import MagicMock, patch
 
-import numpy as np
 import pytest
+
+np = pytest.importorskip("numpy")
 
 
 def _make_fake_d3rlpy() -> ModuleType:

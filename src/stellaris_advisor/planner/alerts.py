@@ -1,5 +1,5 @@
 # src/stellaris_advisor/planner/alerts.py
-"""15 rule-based alert types across 4 severity levels."""
+"""12 rule-based alert types across 4 severity levels."""
 from __future__ import annotations
 
 from stellaris_advisor.config import PlannerConfig
